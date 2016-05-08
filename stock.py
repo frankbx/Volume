@@ -17,6 +17,6 @@ for code in codes:
     # 取得所有日线数据并存入数据库
     his_data = ts.get_hist_data(code, retry_count=20, pause=3)
     his_data['code'] = code
-    print(code, counter, '/', len(codes))
+    print(code, counter, '/', len(codes), his_data.shape)
     counter += 1
     his_data.to_sql('history_data', db, if_exists='append')
