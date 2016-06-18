@@ -1,22 +1,19 @@
 # -*- coding: utf8 -*-
 import tushare as ts
-from sqlalchemy import create_engine
-from datetime import datetime
+import pandas as pd
+import numpy as np
 
-stock_basics = ts.get_stock_basics()
+print(ts.__version__)
 
-db = create_engine('sqlite:///stock.db')
-
-stock_basics['date'] = datetime.now().date()
-stock_basics.to_sql('stock_basics', db)
-# print(stock_basics.head(10))
-# print(datetime.now().date())
-codes = list(stock_basics.index)
-counter = 1
-for code in codes:
-    # 取得所有日线数据并存入数据库
-    his_data = ts.get_hist_data(code, retry_count=20, pause=3)
-    his_data['code'] = code
-    print(code, counter, '/', len(codes), his_data.shape)
-    counter += 1
-    his_data.to_sql('history_data', db, if_exists='append')
+report = ts.get_report_data(2016, 1)
+report['year'] = 2016
+report['quarter'] = 1
+for year in range(2005, 2016):
+    for quarter in range(1, 5):
+        print(year, quarter)
+        r = ts.get_report_data(year, quarter)
+        r['year'] = year
+        r['quarter'] = quarter
+        report = report.append(r, ignore_index=True)
+report.sort_values(by='year')
+report.to_csv('report.csv')
