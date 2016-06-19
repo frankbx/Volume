@@ -22,5 +22,9 @@ def get_reports():
     report.to_csv('report.csv')
 
 data = ts.get_hist_data('000681')
+data = data.sort_index(axis=0)
 
-close = data.close
+data.to_csv('000681.csv')
+# close = data.close
+
+get_reports()
