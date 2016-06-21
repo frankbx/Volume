@@ -1,7 +1,11 @@
 # -*- coding: utf8 -*-
-import pandas as pd
+import tushare as ts
 
-df = pd.read_pickle('data.dat')
-# print(df['volume'].head(5), df['p_change'].head(5), df['turnover'].head(5))
-
-print(df.loc(['volume','p_change','turnover']))
+his_data = ts.get_hist_data('600493', retry_count=20, pause=3)
+his_data['code'] = '600493'
+his_data.to_pickle('600493.dat')
+# print(his_data.volume.head(5))
+print(his_data.shape)
+df = his_data.copy().loc[:, ['volume']]
+print(type(df))
+print(type(his_data.volume))
