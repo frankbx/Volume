@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.image = QImage()
         self.dirty = False
-        self, filename = None
+        self.filename = None
         self.imageLabel = QLabel()
         self.imageLabel.setMinimumSize(200, 200)
         self.imageLabel.setContextMenuPolicy(Qt.ActionsContextMenu)
