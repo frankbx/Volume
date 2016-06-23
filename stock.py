@@ -19,7 +19,7 @@ def get_reports():
             r['quarter'] = quarter
             report = report.append(r, ignore_index=True)
     report.sort_values(by='year')
-    report.to_csv('report.csv')
+    report.to_excel('report.xlsx')
 
 data = ts.get_hist_data('000681')
 data = data.sort_index(axis=0)
