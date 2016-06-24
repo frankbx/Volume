@@ -54,6 +54,14 @@ class MainWindow(QMainWindow):
         self.statusLabel.setText(self.getCpuMemory())
         status.showMessage('Ready', 5000)
 
+    def updateStatusBar(self, event):
+        """在状态栏更新CPU和内存信息"""
+        self.sbCount += 1
+
+        if self.sbCount == self.sbTrigger:
+            self.sbCount = 0
+            self.statusLabel.setText(self.getCpuMemory())
+
     def getCpuMemory(self):
         cpuPercent = psutil.cpu_percent()
         memoryPercent = psutil.virtual_memory().percent
