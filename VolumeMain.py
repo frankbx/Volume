@@ -34,15 +34,14 @@ class MainWindow(QMainWindow):
         pass
 
     def initStatusBar(self):
-        self.sizeLabel = QLabel()
-        self.sizeLabel.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+        self.statusLabel = QLabel()
+        self.statusLabel.setAlignment(Qt.AlignLeft)
         status = self.statusBar()
-        status.setSizeGripEnabled(False)
-        status.addPermanentWidget(self.sizeLabel)
+        status.addPermanentWidget(self.statusLabel)
+        self.statusLabel.setText(self.getCpuMemory())
         status.showMessage('Ready', 5000)
 
     def getCpuMemory(self):
-        """获取CPU和内存状态信息"""
         cpuPercent = psutil.cpu_percent()
         memoryPercent = psutil.virtual_memory().percent
         return u'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)
