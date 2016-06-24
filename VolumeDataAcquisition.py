@@ -21,10 +21,11 @@ def get_reports():
     report.sort_values(by='year')
     report.to_excel('report.xlsx')
 
-data = ts.get_hist_data('000681')
-data = data.sort_index(axis=0)
 
-data.to_csv('000681.csv')
-# close = data.close
+def get_hist_data(code, ktype='D'):
+    data = ts.get_hist_data(code, ktype=ktype)
+    data = data.sort_index(axis=0)
+    data.to_csv(code + '-' + ktype + '.csv')
 
-get_reports()
+
+get_hist_data('000681', 'W')
