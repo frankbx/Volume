@@ -24,14 +24,27 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, logDockWidget)
         self.printer = None
         self.initUI()
-        self.initMenu()
-        self.initStatusBar()
 
     def initUI(self):
         self.setWindowTitle("Volume")
+        self.initMenu()
+        self.initStatusBar()
 
     def initMenu(self):
-        pass
+        menubar = self.menuBar()
+        exitAction = QAction('Exit', self)
+        exitAction.triggered.connect(self.close)
+        aboutAction = QAction('About', self)
+        aboutAction.triggered.connect(self.openAbout)
+        sysMenu = menubar.addMenu('System')
+
+        sysMenu.addAction(exitAction)
+        sysMenu.addAction(aboutAction)
+        functionMenu = menubar.addMenu('Function')
+
+        # 帮助
+        helpMenu = menubar.addMenu('Help')
+        helpMenu.addAction(aboutAction)
 
     def initStatusBar(self):
         self.statusLabel = QLabel()
@@ -46,6 +59,40 @@ class MainWindow(QMainWindow):
         memoryPercent = psutil.virtual_memory().percent
         return u'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)
 
+    def openAbout(self):
+        aboutWidget = AboutWidget(self)
+        aboutWidget.show()
+
+
+class AboutWidget(QDialog):
+    """显示关于信息"""
+
+    #----------------------------------------------------------------------
+    def __init__(self, parent=None):
+        """Constructor"""
+        super(AboutWidget, self).__init__(parent)
+
+        self.initUi()
+
+    #----------------------------------------------------------------------
+    def initUi(self):
+        """"""
+        self.setWindowTitle('About Volume')
+
+        text = u"""
+            Developed by traders, for traders.
+
+            License：MIT
+            """
+
+        label = QLabel()
+        label.setText(text)
+        label.setMinimumWidth(500)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(label)
+
+        self.setLayout(vbox)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
