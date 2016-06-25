@@ -1,8 +1,5 @@
 # -*- coding: utf8 -*-
 import tushare as ts
-import pandas as pd
-import numpy as np
-import talib as ta
 
 print(ts.__version__)
 
@@ -26,6 +23,11 @@ def get_hist_data(code, ktype='D'):
     data = ts.get_hist_data(code, ktype=ktype)
     data = data.sort_index(axis=0)
     data.to_csv(code + '-' + ktype + '.csv')
+
+
+def get_sz_data():
+    sz = ts.get_h_data('399106', index=True)
+    return sz
 
 
 get_hist_data('000681', 'W')

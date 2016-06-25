@@ -5,10 +5,14 @@ import qdarkstyle
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from eventEngine import *
+
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.eventEngine = EventEngine2()
+        self.eventEngine.start()
         self.image = QImage()
         self.dirty = False
         self.filename = None
@@ -22,7 +26,6 @@ class MainWindow(QMainWindow):
         self.listWidget = QListWidget()
         logDockWidget.setWidget(self.listWidget)
         self.addDockWidget(Qt.RightDockWidgetArea, logDockWidget)
-        self.printer = None
         self.initUI()
 
     def initUI(self):
@@ -52,6 +55,9 @@ class MainWindow(QMainWindow):
         status.addPermanentWidget(self.statusLabel)
         self.statusLabel.setText(self.getCpuMemory())
         status.showMessage('Ready', 5000)
+        self.sbCount = 0
+        self.sbTrigger = 10
+        self.eventEngine.register(EVENT_TIMER, self.updateStatusBar)
 
     def updateStatusBar(self, event):
         """在状态栏更新CPU和内存信息"""
@@ -64,7 +70,7 @@ class MainWindow(QMainWindow):
     def getCpuMemory(self):
         cpuPercent = psutil.cpu_percent()
         memoryPercent = psutil.virtual_memory().percent
-        return u'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)
+        return 'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)
 
     def openAbout(self):
         aboutWidget = AboutWidget(self)
@@ -75,6 +81,7 @@ class MainWindow(QMainWindow):
                                      'Are you sure to exit?', QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
+            self.eventEngine.stop()
             event.accept()
         else:
             event.ignore()
