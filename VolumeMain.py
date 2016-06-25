@@ -39,7 +39,6 @@ class MainWindow(QMainWindow):
         sysMenu = menubar.addMenu('System')
 
         sysMenu.addAction(exitAction)
-        sysMenu.addAction(aboutAction)
         functionMenu = menubar.addMenu('Function')
 
         # 帮助
@@ -71,18 +70,24 @@ class MainWindow(QMainWindow):
         aboutWidget = AboutWidget(self)
         aboutWidget.show()
 
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'Exit',
+                                     'Are you sure to exit?', QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
 
 class AboutWidget(QDialog):
-    """显示关于信息"""
-
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def __init__(self, parent=None):
-        """Constructor"""
         super(AboutWidget, self).__init__(parent)
 
         self.initUi()
 
-    #----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
     def initUi(self):
         """"""
         self.setWindowTitle('About Volume')
@@ -101,6 +106,7 @@ class AboutWidget(QDialog):
         vbox.addWidget(label)
 
         self.setLayout(vbox)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
