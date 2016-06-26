@@ -5,14 +5,10 @@ import qdarkstyle
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from eventEngine import *
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.eventEngine = EventEngine2()
-        self.eventEngine.start()
         self.image = QImage()
         self.dirty = False
         self.filename = None
@@ -55,17 +51,12 @@ class MainWindow(QMainWindow):
         status.addPermanentWidget(self.statusLabel)
         self.statusLabel.setText(self.getCpuMemory())
         status.showMessage('Ready', 5000)
-        self.sbCount = 0
-        self.sbTrigger = 10
-        self.eventEngine.register(EVENT_TIMER, self.updateStatusBar)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.updateStatusBar)
+        self.timer.start(1000)
 
-    def updateStatusBar(self, event):
-        """在状态栏更新CPU和内存信息"""
-        self.sbCount += 1
-
-        if self.sbCount == self.sbTrigger:
-            self.sbCount = 0
-            self.statusLabel.setText(self.getCpuMemory())
+    def updateStatusBar(self):
+        self.statusLabel.setText(self.getCpuMemory())
 
     def getCpuMemory(self):
         cpuPercent = psutil.cpu_percent()
@@ -81,7 +72,6 @@ class MainWindow(QMainWindow):
                                      'Are you sure to exit?', QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            self.eventEngine.stop()
             event.accept()
         else:
             event.ignore()
