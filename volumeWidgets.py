@@ -1,11 +1,6 @@
-"""
-Demonstrate creation of a custom graphic (a candlestick plot)
-
-"""
-import random
-
 import pyqtgraph as pg
-from pyqtgraph import QtCore, QtGui
+import tushare as ts
+from PyQt4 import QtCore, QtGui
 
 
 ## Create a subclass of GraphicsObject.
@@ -28,14 +23,14 @@ class CandlestickItem(pg.GraphicsObject):
         self.picture = QtGui.QPicture()
         p = QtGui.QPainter(self.picture)
         p.setPen(pg.mkPen('w'))
-        w = (self.data[1][0] - self.data[0][0]) / 3.
-        for (t, open, close, min, max) in self.data:
-            p.drawLine(QtCore.QPointF(t, min), QtCore.QPointF(t, max))
+        barWidth = (self.data[1][0] - self.data[0][0]) / 3.
+        for (index, open, close, min, max) in self.data:
+            p.drawLine(QtCore.QPointF(index, min), QtCore.QPointF(index, max))
             if open > close:
                 p.setBrush(pg.mkBrush('r'))
             else:
                 p.setBrush(pg.mkBrush('g'))
-            p.drawRect(QtCore.QRectF(t - w, open, w * 2, close - open))
+            p.drawRect(QtCore.QRectF(index - barWidth, open, barWidth * 2, close - open))
         p.end()
 
     def paint(self, p, *args):
@@ -50,7 +45,9 @@ class CandlestickItem(pg.GraphicsObject):
 
 
 app = QtGui.QApplication([])
-
+df = ts.get_hist_data('000681', '2016-01-01')
+print(df.head(20))
+print(df.index)
 data = [  ## fields are (time, open, close, min, max).
     [1., 10, 13, 5, 15],
     [2., 13, 17, 9, 20],
@@ -66,16 +63,15 @@ plt = pg.plot()
 plt.addItem(item)
 plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
 
-
-def update():
-    global item, data
-    data_len = len(data)
-    rand = random.randint(0, len(data) - 1)
-    new_bar = data[rand][:]
-    new_bar[0] = data_len
-    data.append(new_bar)
-    item.set_data(data)
-    app.processEvents()  ## force complete redraw for every plot
+# def update():
+#     global item, data
+#     data_len = len(data)
+#     rand = random.randint(0, len(data) - 1)
+#     new_bar = data[rand][:]
+#     new_bar[0] = data_len
+#     data.append(new_bar)
+#     item.set_data(data)
+#     app.processEvents()  ## force complete redraw for every plot
 
 
 # timer = QtCore.QTimer()
