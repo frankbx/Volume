@@ -4,7 +4,7 @@ import psutil
 import qdarkstyle
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
+from volumeWidgets import KWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
