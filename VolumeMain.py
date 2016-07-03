@@ -105,10 +105,8 @@ class AboutWidget(QDialog):
         label = QLabel()
         label.setText(text)
         label.setMinimumWidth(500)
-
         vbox = QVBoxLayout()
         vbox.addWidget(label)
-
         self.setLayout(vbox)
 
 
@@ -119,4 +117,3 @@ if __name__ == '__main__':
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
-    # df = None
