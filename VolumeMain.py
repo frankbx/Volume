@@ -33,16 +33,23 @@ class MainWindow(QMainWindow):
         menubar = self.menuBar()
         exitAction = QAction('Exit', self)
         exitAction.triggered.connect(self.close)
-        aboutAction = QAction('About', self)
-        aboutAction.triggered.connect(self.openAbout)
         sysMenu = menubar.addMenu('System')
-
         sysMenu.addAction(exitAction)
+
         functionMenu = menubar.addMenu('Function')
+        # updateAction = QAction('Update', self)
+        # updateAction.triggered().connect(self.updateCandle)
+        # functionMenu.addAction(updateAction)
 
         # 帮助
         helpMenu = menubar.addMenu('Help')
+        aboutAction = QAction('About', self)
+        aboutAction.triggered.connect(self.openAbout)
         helpMenu.addAction(aboutAction)
+
+    def updateCandle(self):
+        df = ts.get_hist_data('000681', '2015-01-01', ktype='d')
+        self.candleWidget.update(df)
 
     def initStatusBar(self):
         self.statusLabel = QLabel()
@@ -108,7 +115,7 @@ class AboutWidget(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
-    df = ts.get_hist_data('000681', '2015-01-01',ktype='w')
+    df = ts.get_hist_data('000681', '2015-01-01', ktype='w')
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())

@@ -1,4 +1,5 @@
-import numpy as np
+import random
+
 import pyqtgraph as pg
 import tushare as ts
 from PyQt4 import QtCore, QtGui
@@ -48,12 +49,21 @@ class CandlestickItem(pg.GraphicsObject):
 class CandleWidget(pg.PlotWidget):
     def __init__(self, raw_data):
         super(CandleWidget, self).__init__()
+        self.update(raw_data)
+        # self.candle_data = raw_data.loc[:, ['open', 'close', 'low', 'high']]
+        # r, c = self.candle_data.shape
+        # self.candle_data['num'] = range(1, r + 1)
+        # self.item = CandlestickItem()
+        # self.item.set_data(self.candle_data.values)
+        self.addItem(self.item)
+
+    def update(self, raw_data):
         self.candle_data = raw_data.loc[:, ['open', 'close', 'low', 'high']]
         r, c = self.candle_data.shape
         self.candle_data['num'] = range(1, r + 1)
         self.item = CandlestickItem()
-        self.item.set_data(np.array(self.candle_data))
-        self.addItem(self.item)
+        self.item.set_data(self.candle_data.values)
+
 
 # app = QtGui.QApplication([])
 # df = ts.get_hist_data('000681', '2015-01-01', ktype='w')
@@ -63,28 +73,35 @@ class CandleWidget(pg.PlotWidget):
 # cData['num'] = range(1, r + 1)
 #
 # print(cData)
-# cData = np.array(cData)
+# # cData = np.array(cData)
 # item = CandlestickItem()
-# item.set_data(cData)
+# item.set_data(cData.values)
 #
 # plt = pg.plot()
 # plt.addItem(item)
 # plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
-
+#
+#
 # def update():
-#     global item, data
-#     data_len = len(data)
-#     rand = random.randint(0, len(data) - 1)
-#     new_bar = data[rand][:]
-#     new_bar[0] = data_len
-#     data.append(new_bar)
-#     item.set_data(data)
+#     global item
+#     df = ts.get_hist_data('000681', '2015-01-01', ktype='d')
+#     r, c = df.shape
+#     print(r)
+#     cData = df.loc[:, ['open', 'close', 'low', 'high']]
+#     cData['num'] = range(1, r + 1)
+#     item.set_data(cData.values)
 #     # app.processEvents()  ## force complete redraw for every plot
 #
 #
 # timer = QtCore.QTimer()
 # timer.timeout.connect(update)
-# timer.start(1000)
+# timer.start(10000)
+
+# df = ts.get_hist_data('000681', '2015-01-01', ktype='w')
+# print(enumerate(df))
+# for (value) in df.head(10).values:
+#     print(value)
+# print(type(value))
 
 ## Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':
