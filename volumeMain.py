@@ -101,7 +101,6 @@ class AboutWidget(QDialog):
 
             License：MIT
             """
-
         label = QLabel()
         label.setText(text)
         label.setMinimumWidth(500)
