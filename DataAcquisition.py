@@ -27,13 +27,13 @@ def get_hist_data(code, ktype='D'):
 
 def get_sz_data():
     sz = ts.get_h_data('399106', start='2000-01-01', index=True)
-    sz.to_csv('sz.csv')
+    # sz.to_csv('sz.csv')
     return sz
 
 
 def get_sh_data():
     sh = ts.get_h_data('000001', start='2000-01-01', index=True)
-    sh.to_csv('sh.csv')
+    # sh.to_csv('sh.csv')
     return sh
 
 
