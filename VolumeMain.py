@@ -2,20 +2,20 @@ import sys
 
 import psutil
 import qdarkstyle
+import tushare as ts
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from volumeWidgets import KWidget
+
+from volumeWidgets import CandleWidget
+
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, raw_data):
         super(MainWindow, self).__init__()
-        self.image = QImage()
-        self.dirty = False
-        self.filename = None
-        self.imageLabel = QLabel()
-        self.imageLabel.setMinimumSize(200, 200)
-        self.imageLabel.setContextMenuPolicy(Qt.ActionsContextMenu)
-        self.setCentralWidget(self.imageLabel)
+
+        self.candleWidget = CandleWidget(raw_data)
+
+        self.setCentralWidget(self.candleWidget)
         logDockWidget = QDockWidget('log', self)
         logDockWidget.setObjectName('LogDockWidget')
         logDockWidget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -108,6 +108,8 @@ class AboutWidget(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
-    mainWindow = MainWindow()
+    df = ts.get_hist_data('000681', '2015-01-01',ktype='w')
+    mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
+    # df = None

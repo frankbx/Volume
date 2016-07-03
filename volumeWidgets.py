@@ -1,30 +1,31 @@
+import numpy as np
 import pyqtgraph as pg
 import tushare as ts
 from PyQt4 import QtCore, QtGui
 
 
-## Create a subclass of GraphicsObject.
-## The only required methods are paint() and boundingRect() 
-## (see QGraphicsItem documentation)
+# Create a subclass of GraphicsObject.
+# The only required methods are paint() and boundingRect()
+# (see QGraphicsItem documentation)
 class CandlestickItem(pg.GraphicsObject):
     def __init__(self):
         pg.GraphicsObject.__init__(self)
         self.flagHasData = False
 
     def set_data(self, data):
-        self.data = data  ## data must have fields: time, open, close, min, max
+        self.data = data  # data must have fields: time, open, close, min, max
         self.flagHasData = True
         self.generatePicture()
         self.informViewBoundsChanged()
 
     def generatePicture(self):
-        ## pre-computing a QPicture object allows paint() to run much more quickly, 
-        ## rather than re-drawing the shapes every time.
+        # pre-computing a QPicture object allows paint() to run much more quickly,
+        # rather than re-drawing the shapes every time.
         self.picture = QtGui.QPicture()
         p = QtGui.QPainter(self.picture)
         p.setPen(pg.mkPen('w'))
-        barWidth = (self.data[1][0] - self.data[0][0]) / 3.
-        for (index, open, close, min, max) in self.data:
+        barWidth = 1 / 3.
+        for (open, close, min, max, index) in self.data:
             p.drawLine(QtCore.QPointF(index, min), QtCore.QPointF(index, max))
             if open > close:
                 p.setBrush(pg.mkBrush('r'))
@@ -38,30 +39,37 @@ class CandlestickItem(pg.GraphicsObject):
             p.drawPicture(0, 0, self.picture)
 
     def boundingRect(self):
-        ## boundingRect _must_ indicate the entire area that will be drawn on
-        ## or else we will get artifacts and possibly crashing.
-        ## (in this case, QPicture does all the work of computing the bouning rect for us)
+        # boundingRect _must_ indicate the entire area that will be drawn on
+        # or else we will get artifacts and possibly crashing.
+        # (in this case, QPicture does all the work of computing the bouning rect for us)
         return QtCore.QRectF(self.picture.boundingRect())
 
 
-app = QtGui.QApplication([])
-df = ts.get_hist_data('000681', '2016-01-01')
-print(df.head(20))
-print(df.index)
-data = [  ## fields are (time, open, close, min, max).
-    [1., 10, 13, 5, 15],
-    [2., 13, 17, 9, 20],
-    [3., 17, 14, 11, 23],
-    [4., 14, 15, 5, 19],
-    [5., 15, 9, 8, 22],
-    [6., 9, 15, 8, 16],
-]
-item = CandlestickItem()
-item.set_data(data)
+class CandleWidget(pg.PlotWidget):
+    def __init__(self, raw_data):
+        super(CandleWidget, self).__init__()
+        self.candle_data = raw_data.loc[:, ['open', 'close', 'low', 'high']]
+        r, c = self.candle_data.shape
+        self.candle_data['num'] = range(1, r + 1)
+        self.item = CandlestickItem()
+        self.item.set_data(np.array(self.candle_data))
+        self.addItem(self.item)
 
-plt = pg.plot()
-plt.addItem(item)
-plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
+# app = QtGui.QApplication([])
+# df = ts.get_hist_data('000681', '2015-01-01', ktype='w')
+# r, c = df.shape
+# print(r)
+# cData = df.copy().loc[:, ['open', 'close', 'low', 'high']]
+# cData['num'] = range(1, r + 1)
+#
+# print(cData)
+# cData = np.array(cData)
+# item = CandlestickItem()
+# item.set_data(cData)
+#
+# plt = pg.plot()
+# plt.addItem(item)
+# plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
 
 # def update():
 #     global item, data
@@ -71,12 +79,12 @@ plt.setWindowTitle('pyqtgraph example: customGraphicsItem')
 #     new_bar[0] = data_len
 #     data.append(new_bar)
 #     item.set_data(data)
-#     app.processEvents()  ## force complete redraw for every plot
-
-
+#     # app.processEvents()  ## force complete redraw for every plot
+#
+#
 # timer = QtCore.QTimer()
 # timer.timeout.connect(update)
-# timer.start(10)
+# timer.start(1000)
 
 ## Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':
