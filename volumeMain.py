@@ -112,7 +112,7 @@ class AboutWidget(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
-    df = ts.get_hist_data('000681', '2015-01-01', ktype='w')
+    df = ts.get_hist_data('000681', '2015-01-01', ktype='D')
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
