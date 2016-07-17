@@ -7,6 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from volumeWidgets import CandleWidget
+import dataAcquisition
 
 
 class MainWindow(QMainWindow):
@@ -112,7 +113,7 @@ class AboutWidget(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
-    df = ts.get_hist_data('000681', '2015-01-01', ktype='D')
+    df = dataAcquisition.get_sh_data()
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
