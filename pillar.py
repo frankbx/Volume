@@ -3,6 +3,7 @@ import tushare as ts
 
 index_list = list()
 
+
 def describe(code, p_change=None):
     global index_list
     his_data = ts.get_hist_data(code, retry_count=20, pause=3)

@@ -4,13 +4,12 @@
 import sys
 
 import numpy as np
-from matplotlib.figure import Figure
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import qdarkstyle
-
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 
 class PlotWidget(QWidget):

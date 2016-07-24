@@ -1,8 +1,6 @@
 # -*- coding: utf8 -*-
 
 import tushare as ts
-import pandas as pd
-import numpy as np
 
 print(ts.__version__)
 report = ts.get_report_data(2016, 1)

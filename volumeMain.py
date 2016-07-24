@@ -6,8 +6,8 @@ import tushare as ts
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from volumeWidgets import CandleWidget
 import dataAcquisition
+from volumeWidgets import CandleWidget
 
 
 class MainWindow(QMainWindow):
@@ -117,4 +117,3 @@ if __name__ == '__main__':
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
-

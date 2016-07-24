@@ -1,7 +1,4 @@
-import random
-
 import pyqtgraph as pg
-import tushare as ts
 from PyQt4 import QtCore, QtGui
 
 
