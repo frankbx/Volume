@@ -24,4 +24,5 @@ def describe(code, p_change=None):
 describe('600493', 1)
 describe('000681', 1)
 describe('000001', 1)
+describe('399106', 2)
 # print(index_list)
