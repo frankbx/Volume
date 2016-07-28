@@ -20,7 +20,7 @@ def get_reports():
 
 
 def get_hist_data(code, ktype='D'):
-    data = ts.get_hist_data(code, ktype=ktype)
+    data = ts.get_hist_data(code, ktype=ktype, retry_count=3)
     data = data.sort_index(axis=0)
     data.to_csv('./data/' + code + '-' + ktype + '.csv')
 
@@ -37,14 +37,15 @@ def get_sh_data():
     return sh
 
 
-def get_all_data():
+def get_all_data(ktype='D'):
     df = ts.get_today_all()
     row, col = df.shape
     print(row, col)
     counter = 0
     for code in df.code:
-        get_hist_data(code)
+        get_hist_data(code, ktype)
         counter += 1
         print(counter, '/', row)
+
 
 get_all_data()
