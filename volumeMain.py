@@ -59,9 +59,9 @@ class MainWindow(QMainWindow):
         status.addPermanentWidget(self.statusLabel)
         self.statusLabel.setText(self.getCpuMemory())
         status.showMessage('Ready', 5000)
-        self.statusTimer = QTimer()
-        self.statusTimer.timeout.connect(self.updateStatusBar)
-        self.statusTimer.start(1000)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.updateStatusBar)
+        self.timer.start(1000)
 
     def updateStatusBar(self):
         self.statusLabel.setText(self.getCpuMemory())
