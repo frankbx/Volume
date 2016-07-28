@@ -37,11 +37,12 @@ def get_sh_data():
     return sh
 
 
-df = ts.get_today_all()
-row, col = df.shape
-print(row, col)
-counter = 0
-for code in df.code:
-    get_hist_data(code)
-    counter += 1
-    print(counter, '/', row)
+def get_all_data():
+    df = ts.get_today_all()
+    row, col = df.shape
+    print(row, col)
+    counter = 0
+    for code in df.code:
+        get_hist_data(code)
+        counter += 1
+        print(counter, '/', row)
