@@ -21,9 +21,8 @@ def describe(code, p_change=None):
     # print(d.loc['75%', ])
     print(d.loc[:, ['p_change', 'turnover']])
 
-describe('000012',2)
-# describe('600493', 1)
-# describe('000681', 1)
+
+describe('000681', -2)
 # describe('000001', 1)
 # describe('399106', 2)
 # print(index_list)
