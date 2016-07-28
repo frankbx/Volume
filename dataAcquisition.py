@@ -22,7 +22,7 @@ def get_reports():
 def get_hist_data(code, ktype='D'):
     data = ts.get_hist_data(code, ktype=ktype)
     data = data.sort_index(axis=0)
-    data.to_csv('../data/' + code + '-' + ktype + '.csv')
+    data.to_csv('./data/' + code + '-' + ktype + '.csv')
 
 
 def get_sz_data():
@@ -46,3 +46,5 @@ def get_all_data():
         get_hist_data(code)
         counter += 1
         print(counter, '/', row)
+
+get_all_data()
