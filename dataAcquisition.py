@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-import pandas as pd
 import tushare as ts
 
 print(ts.__version__)
@@ -22,8 +21,7 @@ def get_reports():
 
 def get_hist_data(code, ktype='D'):
     data = ts.get_hist_data(code, ktype=ktype, retry_count=3)
-    print(data.index[0])
-    print(type(data.index[0]))
+    data = data.sort_index(axis=0)
     data.to_csv('./data/' + code + '-' + ktype + '.csv')
 
 
@@ -34,38 +32,20 @@ def get_sz_data():
 
 
 def get_sh_data():
-    sh = ts.get_h_data('000001', start='2000-01-05', index=True)
-    sh.to_csv('sh.csv')
+    sh = ts.get_h_data('000001', start='2000-01-01', index=True)
+    # sh.to_csv('sh.csv')
     return sh
 
 
 def get_all_data(ktype='D'):
     df = ts.get_today_all()
     row, col = df.shape
-    # print(row, col)
+    print(row, col)
     counter = 0
     for code in df.code:
-        data = ts.get_hist_data(code, ktype, retry_count=3)
-        data.to_csv('./data/' + code + '-' + ktype + '.csv')
+        get_hist_data(code, ktype)
         counter += 1
         print(counter, '/', row)
 
 
-def update_all_data(ktype='D'):
-    today_data = ts.get_today_all()
-    row, col = today_data.shape
-    counter = 0
-    for code in today_data.code:
-        # TODO check if the file already exists
-        # TODO get the latest date
-        # TODO retrieve data from the day after latest date
-        # TODO Append data to the file
-        data = ts.get_hist_data(code, ktype, retry_count=3)
-
-
-# get_all_data('W')
-# get_hist_data('000681')
-df = get_sh_data()
-df = pd.read_csv('./sh.csv')
-row, col = df.shape
-print(df.date[row - 1])
+get_all_data()
