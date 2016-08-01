@@ -98,8 +98,8 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.main_widget = QtGui.QWidget(self)
 
         l = QtGui.QVBoxLayout(self.main_widget)
-        sc = MyStaticMplCanvas(self.main_widget, width=5, height=4, dpi=100)
-        dc = MyDynamicMplCanvas(self.main_widget, width=5, height=4, dpi=100)
+        sc = MyStaticMplCanvas(self.main_widget, width=5, height=4, dpi=50)
+        dc = MyDynamicMplCanvas(self.main_widget, width=5, height=4, dpi=50)
         l.addWidget(sc)
         l.addWidget(dc)
 
