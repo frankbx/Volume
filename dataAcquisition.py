@@ -68,4 +68,5 @@ def update_all_data(code, ktype='D'):
 
 
 # get_all_data()
-update_all_data('000001')
+# update_all_data('000001')
+ts.get_hist_data('000001')
