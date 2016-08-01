@@ -47,26 +47,35 @@ def get_all_data(ktype='D'):
 
 
 def update_all_data(code, ktype='D'):
-    # check if the file already exists
     filename = './data/' + code + data_file_suffix[ktype]
+    # print(filename)
     # check if the file already exists
     if os.path.exists(filename):
         # get the latest date
         existing_data = pd.read_csv(filename)
-        latest_date = existing_data.date[0]
+        row, col = existing_data.shape
+        latest_date = existing_data.date[row - 1]
         print(latest_date)
         # retrieve data from the latest date
-        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=5)
+        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=20, pause=1)
+        r, c = data.shape
         # discard duplicated data of the last day
-        delta_data = data.iloc[1:]
+        delta_data = data.iloc[:r - 1].copy()
+        delta_data.sort_index(axis=0, inplace=True)
+        print(delta_data)
         # Append data to the file
         delta_data.to_csv(filename, mode='a', header=None)
     else:
         # Create the data file directly
-        data = ts.get_hist_data(code=code, ktype=ktype, retry_count=3)
-        data.to_csv(filename)
+        data = ts.get_hist_data(code=code, ktype=ktype, retry_count=20, pause=1)
+        # Data can be None if it's a new stock
+        if data is not None:
+            # The data is sorted so that the latest data at the bottom of the file.
+            # It's easier to append future data while keep the ascending order of date
+            data.sort_index(axis=0, inplace=True)
+            data.to_csv(filename)
 
 
-# get_all_data()
+get_all_data()
 # update_all_data('000001')
-ts.get_hist_data('000001')
+# ts.get_hist_data('000001')
