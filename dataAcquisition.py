@@ -55,7 +55,7 @@ def update_all_data(code, ktype='D'):
         existing_data = pd.read_csv(filename)
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
-        print(latest_date)
+        # print(latest_date)
         # retrieve data from the latest date
         data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=20, pause=1)
         r, c = data.shape
@@ -80,5 +80,5 @@ def update_all_data(code, ktype='D'):
 
 
 get_all_data()
-# update_all_data('000001')
+# update_all_data('000002')
 # ts.get_hist_data('000001')

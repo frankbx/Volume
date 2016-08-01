@@ -55,6 +55,7 @@ class CandleWidget(pg.PlotWidget):
         self.addItem(self.item)
 
     def update(self, raw_data):
+        # raw_data.sort_index(axis=0, inplace=True)
         self.candle_data = raw_data.loc[:, ['open', 'close', 'low', 'high']]
         r, c = self.candle_data.shape
         self.candle_data['num'] = range(1, r + 1)
