@@ -1,5 +1,10 @@
 # -*- coding: utf8 -*-
+import os
+
+import pandas as pd
 import tushare as ts
+
+from volumeConstants import *
 
 print(ts.__version__)
 
@@ -21,7 +26,8 @@ def get_reports():
 
 def get_hist_data(code, ktype='D'):
     data = ts.get_hist_data(code, ktype=ktype, retry_count=3)
-    data = data.sort_index(axis=0)
+    print(data.index[0])
+    print(type(data.index[0]))
     data.to_csv('./data/' + code + '-' + ktype + '.csv')
 
 
@@ -32,20 +38,41 @@ def get_sz_data():
 
 
 def get_sh_data():
-    sh = ts.get_h_data('000001', start='2000-01-01', index=True)
-    # sh.to_csv('sh.csv')
+    sh = ts.get_h_data('000001', start='2000-01-05', index=True)
+    sh.to_csv('sh.csv')
     return sh
 
 
 def get_all_data(ktype='D'):
     df = ts.get_today_all()
     row, col = df.shape
-    print(row, col)
     counter = 0
     for code in df.code:
-        get_hist_data(code, ktype)
+        update_all_data(code, ktype)
         counter += 1
         print(counter, '/', row)
 
 
-get_all_data()
+def update_all_data(code, ktype='D'):
+    # check if the file already exists
+    filename = './data/' + code + data_file_suffix[ktype]
+    # check if the file already exists
+    if os.path.exists(filename):
+        # get the latest date
+        existing_data = pd.read_csv(filename)
+        latest_date = existing_data.date[0]
+        print(latest_date)
+        # retrieve data from the latest date
+        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=5)
+        # discard duplicated data of the last day
+        delta_data = data.iloc[1:]
+        # Append data to the file
+        delta_data.to_csv(filename, mode='a', header=None)
+    else:
+        # Create the data file directly
+        data = ts.get_hist_data(code=code, ktype=ktype, retry_count=3)
+        data.to_csv(filename)
+
+
+# get_all_data()
+update_all_data('000001')
