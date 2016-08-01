@@ -59,12 +59,15 @@ def update_all_data(code, ktype='D'):
         # retrieve data from the latest date
         data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=20, pause=1)
         r, c = data.shape
-        # discard duplicated data of the last day
-        delta_data = data.iloc[:r - 1].copy()
-        delta_data.sort_index(axis=0, inplace=True)
-        print(delta_data)
-        # Append data to the file
-        delta_data.to_csv(filename, mode='a', header=None)
+        # discard duplicated data of the last day if there's more than 1 row
+        if r > 1:
+            delta_data = data.iloc[:r - 1].copy()
+            # The data is sorted so that the latest data at the bottom of the file.
+            # It's easier to append future data while keep the ascending order of date
+            delta_data.sort_index(axis=0, inplace=True)
+            # print(delta_data)
+            # Append data to the file
+            delta_data.to_csv(filename, mode='a', header=None)
     else:
         # Create the data file directly
         data = ts.get_hist_data(code=code, ktype=ktype, retry_count=20, pause=1)

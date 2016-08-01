@@ -6,7 +6,6 @@ import tushare as ts
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-import dataAcquisition
 from volumeWidgets import CandleWidget
 
 
@@ -48,9 +47,9 @@ class MainWindow(QMainWindow):
         aboutAction.triggered.connect(self.openAbout)
         helpMenu.addAction(aboutAction)
 
-    def updateCandle(self):
-        df = ts.get_hist_data('000681', '2015-01-01', ktype='d')
-        self.candleWidget.update(df)
+    # def updateCandle(self):
+    #     df = ts.get_hist_data('000681', '2015-01-01', ktype='d')
+    #     self.candleWidget.update(df)
 
     def initStatusBar(self):
         self.statusLabel = QLabel()
@@ -113,7 +112,7 @@ class AboutWidget(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet(pyside=False))
-    df = dataAcquisition.get_sh_data()
+    df = ts.get_hist_data('000681', '2015-01-01', ktype='d')
     mainWindow = MainWindow(df)
     mainWindow.showMaximized()
     sys.exit(app.exec_())
