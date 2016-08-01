@@ -1,6 +1,10 @@
 # -*- coding: utf8 -*-
+import os
+
 import pandas as pd
 import tushare as ts
+
+from volumeConstants import *
 
 print(ts.__version__)
 
@@ -42,30 +46,33 @@ def get_sh_data():
 def get_all_data(ktype='D'):
     df = ts.get_today_all()
     row, col = df.shape
-    # print(row, col)
     counter = 0
     for code in df.code:
-        data = ts.get_hist_data(code, ktype, retry_count=3)
-        data.to_csv('./data/' + code + '-' + ktype + '.csv')
+        update_all_data(code, ktype)
         counter += 1
         print(counter, '/', row)
 
 
-def update_all_data(ktype='D'):
-    today_data = ts.get_today_all()
-    row, col = today_data.shape
-    counter = 0
-    for code in today_data.code:
-        # TODO check if the file already exists
-        # TODO get the latest date
-        # TODO retrieve data from the day after latest date
-        # TODO Append data to the file
-        data = ts.get_hist_data(code, ktype, retry_count=3)
+def update_all_data(code, ktype='D'):
+    # check if the file already exists
+    filename = './data/' + code + data_file_suffix[ktype]
+    # check if the file already exists
+    if os.path.exists(filename):
+        # get the latest date
+        existing_data = pd.read_csv(filename)
+        latest_date = existing_data.date[0]
+        print(latest_date)
+        # retrieve data from the latest date
+        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=5)
+        # discard duplicated data of the last day
+        delta_data = data.iloc[1:]
+        # Append data to the file
+        delta_data.to_csv(filename, mode='a', header=None)
+    else:
+        # Create the data file directly
+        data = ts.get_hist_data(code=code, ktype=ktype, retry_count=3)
+        data.to_csv(filename)
 
 
-# get_all_data('W')
-# get_hist_data('000681')
-df = get_sh_data()
-df = pd.read_csv('./sh.csv')
-row, col = df.shape
-print(df.date[row - 1])
+# get_all_data()
+update_all_data('000001')
