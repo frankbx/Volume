@@ -24,13 +24,6 @@ def get_reports():
     report.to_excel('report.xlsx')
 
 
-def get_hist_data(code, ktype='D'):
-    data = ts.get_hist_data(code, ktype=ktype, retry_count=3)
-    print(data.index[0])
-    print(type(data.index[0]))
-    data.to_csv('./data/' + code + '-' + ktype + '.csv')
-
-
 def get_sz_data():
     sz = ts.get_h_data('399106', start='2000-01-01', index=True)
     # sz.to_csv('sz.csv')
