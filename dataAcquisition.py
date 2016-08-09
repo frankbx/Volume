@@ -42,7 +42,7 @@ def get_sh_data():
 def get_all_data(ktype='D', test_flag=False):
     if not test_flag:
         df = ts.get_today_all()
-        chuncks = split_into_chunck(df.code, 2855)
+        chuncks = split_into_chunck(df.code, 50)
     else:
         df = pd.read_csv('./data/000681-D.csv')
         chuncks = split_into_chunck(df.date, 20)
@@ -54,7 +54,6 @@ def get_all_data(ktype='D', test_flag=False):
     print('Start at:', ctime())
     print(len(threads))
     for t in threads:
-        t.setDaemon(True)
         t.start()
     t.join()
     end = time()
