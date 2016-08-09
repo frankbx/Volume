@@ -1,11 +1,11 @@
 # -*- coding: utf8 -*-
 import os
+import threading
+from math import ceil
+from time import ctime, time
 
 import pandas as pd
 import tushare as ts
-import threading
-from time import ctime, sleep, time
-from math import ceil
 
 from volumeConstants import *
 
@@ -42,7 +42,7 @@ def get_sh_data():
 def get_all_data(ktype='D', test_flag=False):
     if not test_flag:
         df = ts.get_today_all()
-        chuncks = split_into_chunck(df.code)
+        chuncks = split_into_chunck(df.code, 20)
     else:
         df = pd.read_csv('./data/000681-D.csv')
         chuncks = split_into_chunck(df.date, 20)
