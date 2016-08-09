@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 import os
 
 import pandas as pd
@@ -7,7 +6,7 @@ from volumeConstants import *
 
 
 def describe(code, ktype='D', p_change=None):
-    filename = './data/' + code + data_file_suffix[ktype]
+    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
     print(filename)
     if os.path.exists(filename):
         his_data = pd.read_csv(filename)

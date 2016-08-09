@@ -3,6 +3,9 @@ import os
 
 import pandas as pd
 import tushare as ts
+import threading
+from time import ctime, sleep, time
+from math import ceil
 
 from volumeConstants import *
 
@@ -36,18 +39,52 @@ def get_sh_data():
     return sh
 
 
-def get_all_data(ktype='D'):
-    df = ts.get_today_all()
-    row, col = df.shape
-    counter = 0
-    for code in df.code:
-        update_all_data(code, ktype)
-        counter += 1
-        print(counter, '/', row)
+def get_all_data(ktype='D', test_flag=False):
+    if not test_flag:
+        df = ts.get_today_all()
+        chuncks = split_into_chunck(df.code, 2855)
+    else:
+        df = pd.read_csv('./data/000681-D.csv')
+        chuncks = split_into_chunck(df.date, 20)
+    threads = list()
+    for i in range(len(chuncks)):
+        th = threading.Thread(target=process, args=(chuncks[i], ktype))
+        threads.append(th)
+    start = time()
+    print('Start at:', ctime())
+    print(len(threads))
+    for t in threads:
+        t.setDaemon(True)
+        t.start()
+    t.join()
+    end = time()
+    print('End at:', ctime())
+    print('Duration:', round(end - start, 2))
 
 
-def update_all_data(code, ktype='D'):
-    filename = './data/' + code + data_file_suffix[ktype]
+def split_into_chunck(data_list, chunck_size=100):
+    l = len(data_list)
+    n = ceil(l / chunck_size)
+    deck = list()
+    for i in range(n):
+        if ((1 + i) * chunck_size) < l:
+            deck.append(data_list[i * chunck_size:(i + 1) * chunck_size])
+        else:
+            deck.append(data_list[i * chunck_size:])
+    print('Total length:', l)
+    print('Chunck size:', chunck_size)
+    print('Number of chuncks:', deck.__len__())
+    return deck
+
+
+def process(code_list, ktype='D'):
+    for code in code_list:
+        update_stock_data(code, ktype)
+        # sleep(0.2)
+
+
+def update_stock_data(code, ktype='D'):
+    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
     # print(filename)
     # check if the file already exists
     if os.path.exists(filename):
@@ -55,12 +92,12 @@ def update_all_data(code, ktype='D'):
         existing_data = pd.read_csv(filename)
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
-        # print(latest_date)
         # retrieve data from the latest date
         data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=20, pause=1)
         r, c = data.shape
         # discard duplicated data of the last day if there's more than 1 row
         if r > 1:
+            # Locate by integer, not index
             delta_data = data.iloc[:r - 1].copy()
             # The data is sorted so that the latest data at the bottom of the file.
             # It's easier to append future data while keep the ascending order of date
@@ -80,5 +117,3 @@ def update_all_data(code, ktype='D'):
 
 
 get_all_data()
-# update_all_data('000002')
-# ts.get_hist_data('000001')
