@@ -121,4 +121,4 @@ def get_stock_data(code, ktype='D', start=None, end=None):
             print(code, 'created')
 
 
-get_all_data()
+get_all_data(ktype='D')
