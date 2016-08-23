@@ -79,11 +79,11 @@ def split_into_chunck(data_list, chunck_size=100):
 
 def process(code_list, ktype='D'):
     for code in code_list:
-        update_stock_data(code, ktype)
+        get_stock_data(code, ktype)
         # sleep(0.2)
 
 
-def update_stock_data(code, ktype='D'):
+def get_stock_data(code, ktype='D', start=None, end=None):
     filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
     # print(filename)
     # check if the file already exists
@@ -105,15 +105,20 @@ def update_stock_data(code, ktype='D'):
             # print(delta_data)
             # Append data to the file
             delta_data.to_csv(filename, mode='a', header=None)
+            print(code, 'updated')
+            # else:
+            # print(code, 'not changed')
     else:
         # Create the data file directly
-        data = ts.get_hist_data(code=code, ktype=ktype, retry_count=20, pause=1)
+        data = ts.get_hist_data(code=code, ktype=ktype, start=start, end=end,
+                                retry_count=20, pause=1)
         # Data can be None if it's a new stock
         if data is not None:
             # The data is sorted so that the latest data at the bottom of the file.
             # It's easier to append future data while keep the ascending order of date
             data.sort_index(axis=0, inplace=True)
             data.to_csv(filename)
+            print(code, 'created')
 
 
 get_all_data()

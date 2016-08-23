@@ -22,4 +22,14 @@ def describe(code, ktype='D', p_change=None):
         print(d.loc[:, ['p_change', 'turnover']])
 
 
+def market_overview():
+    # Get an estimate of market performance of the day
+    # Points of interest:
+    # 1. SH, SZ change percent
+    # 2. SH, SZ volume
+    # 3. Number of stocks go up, down and flat
+    # 4. Distribution of each group
+    pass
+
+
 describe('000681', p_change=2)
