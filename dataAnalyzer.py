@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 
 from volumeConstants import *
@@ -32,4 +33,7 @@ def market_overview():
     pass
 
 
-describe('000681', p_change=2)
+# describe('000681', p_change=2)
+
+basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
+print(basics)

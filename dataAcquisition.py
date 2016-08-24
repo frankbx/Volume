@@ -121,4 +121,10 @@ def get_stock_data(code, ktype='D', start=None, end=None):
             print(code, 'created')
 
 
-get_all_data(ktype='D')
+def get_stock_basics():
+    basics = ts.get_stock_basics()
+    basics.to_csv("./basics.csv", encoding='utf8')
+
+
+# get_all_data(ktype='D')
+get_stock_basics()
