@@ -1,4 +1,5 @@
 import os
+from time import ctime, time
 
 import numpy as np
 import pandas as pd
@@ -36,4 +37,31 @@ def market_overview():
 # describe('000681', p_change=2)
 
 basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
-print(basics)
+codes = basics.code
+col = ['code', 'total', 'limit_up', 'percent']
+limit_up_results = None
+start = time()
+print('Start at:', ctime())
+
+for code in codes:
+    # print(code)
+    filename = './data/' + code + DATA_FILE_SUFFIX['D']
+    if os.path.exists(filename):
+        # print(filename)
+        data = pd.read_csv(filename)
+        # print(data.shape)
+        limit_up = data[data.p_change > 9.9].copy()
+        # print(limit_up.shape)
+        df = pd.DataFrame(
+            [{'code': code, 'total': len(data), 'limit_up': len(limit_up), 'percent': len(limit_up) / len(data)}])
+        if limit_up_results is None:
+            limit_up_results = df
+        else:
+            limit_up_results = limit_up_results.append(df)
+            # break
+# print(limit_up_results.describe())
+end = time()
+
+print(limit_up_results[limit_up_results.percent > 0.2].describe())
+print('End at:', ctime())
+print('Duration:', round(end - start, 2), 'seconds')
