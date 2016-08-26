@@ -42,6 +42,7 @@ col = ['code', 'total', 'limit_up', 'percent']
 limit_up_results = None
 start = time()
 print('Start at:', ctime())
+limit_up_data = None
 
 for code in codes:
     # print(code)
@@ -51,6 +52,11 @@ for code in codes:
         data = pd.read_csv(filename)
         # print(data.shape)
         limit_up = data[data.p_change > 9.9].copy()
+        limit_up['code'] = code
+        if limit_up_data is None:
+            limit_up_data = limit_up
+        else:
+            limit_up_data = limit_up_data.append(limit_up)
         # print(limit_up.shape)
         df = pd.DataFrame(
             [{'code': code, 'total': len(data), 'limit_up': len(limit_up), 'percent': len(limit_up) / len(data)}])
@@ -61,7 +67,7 @@ for code in codes:
             # break
 # print(limit_up_results.describe())
 end = time()
-
+limit_up_data.to_csv('limit_up_data.csv', encoding='utf8', index=False)
 print(limit_up_results[limit_up_results.percent > 0.2].describe())
 print('End at:', ctime())
 print('Duration:', round(end - start, 2), 'seconds')
