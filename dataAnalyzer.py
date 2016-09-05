@@ -65,9 +65,8 @@ for code in codes:
         else:
             limit_up_results = limit_up_results.append(df)
             # break
-# print(limit_up_results.describe())
 end = time()
 limit_up_data.to_csv('limit_up_data.csv', encoding='utf8', index=False)
-print(limit_up_results[limit_up_results.percent > 0.2].describe())
+print(limit_up_results.describe())
 print('End at:', ctime())
 print('Duration:', round(end - start, 2), 'seconds')
