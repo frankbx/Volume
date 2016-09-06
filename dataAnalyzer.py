@@ -42,10 +42,6 @@ def market_overview():
     pass
 
 
-basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
-codes = basics.code
-
-
 def combo_counter(seq, counter):
     length = len(seq)
     s = pd.Series(range(min(seq), min(seq) + length))
@@ -87,30 +83,32 @@ def combo_analyzer(code, ktype='D', start=None, end=None, percentage=9.9):
             result_list.append(counter)
 
 
-start = time()
-print('Start at:', ctime())
+def run_combo():
+    basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
+    codes = basics.code
 
-for code in codes:
-    print('Processing...', code)
-    combo_analyzer(code)
+    start = time()
+    print('Start at:', ctime())
 
-# combo_analyzer('000681')
-df = pd.DataFrame(result_list)
-df.fillna(value=0, inplace=True)
-# df = pd.read_csv('combo.csv', dtype={'code': np.str})
-df.set_index(df.code, inplace=True)
-df.pop('code')
-df.to_csv('combo.csv')
+    for code in codes:
+        print('Processing...', code)
+        combo_analyzer(code)
 
-# df.sort_index(axis=1, inplace=True)
+    # combo_analyzer('000681')
+    df = pd.DataFrame(result_list)
+    df.fillna(value=0, inplace=True)
+    # df = pd.read_csv('combo.csv', dtype={'code': np.str})
+    df.set_index(df.code, inplace=True)
+    df.pop('code')
+    df.sort_index(axis=1, inplace=True)
+    df.to_csv('combo.csv')
 
-# print(df.index.dtype)
-# df.index = df.code
+    print(df.head(5))
+
+    end = time()
+    print('End at:', ctime())
+    print('Duration:', round(end - start, 2), 'seconds')
 
 
-# df.to_csv('combo.csv')
-print(df.head(5))
-
-end = time()
-print('End at:', ctime())
-print('Duration:', round(end - start, 2), 'seconds')
+df = pd.read_csv('combo.csv')
+print(df.describe().T)
