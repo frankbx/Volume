@@ -7,6 +7,14 @@ import pandas as pd
 from volumeConstants import *
 
 
+def read_data(code, ktype='D'):
+    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
+    data = None
+    if os.path.exists(filename):
+        data = pd.read_csv(filename)
+    return data
+
+
 def describe(code, ktype='D', p_change=None):
     filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
     print(filename)
@@ -34,34 +42,75 @@ def market_overview():
     pass
 
 
-# describe('000681', p_change=2)
-
 basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
 codes = basics.code
-col = ['code', 'total', 'limit_up', 'percent']
-limit_up_results = None
+
+
+def combo_counter(seq, counter):
+    length = len(seq)
+    s = pd.Series(range(min(seq), min(seq) + length))
+    seq.index = range(0, length)
+    d = {'origin': seq, 'i': s}
+    df = pd.DataFrame(d)
+    df['delta'] = seq - s
+    #    print(df)
+    n = len(df[df.delta == 0])
+    #    print(n)
+    for i in range(n, 0, -1):
+        if i not in counter:
+            counter[i] = 1
+        else:
+            counter[i] += 1
+        for x in range(i - 1, 0, -1):
+            if x not in counter:
+                counter[x] = 1
+            else:
+                counter[x] += 1
+    a = df[df.delta > 0].origin
+    #    print(type(a))
+    if length - n > 0:
+        combo_counter(a, counter)
+
+
+result_list = []
+
+
+def combo_analyzer(code, ktype='D', start=None, end=None, percentage=9.9):
+    data = read_data(code, ktype)
+    if data is not None:
+        data['intIdx'] = range(0, len(data))
+        match = data[data.p_change > percentage].copy()
+        #    print(match.intIdx)
+        if len(match) > 0:
+            counter = {'code': code}
+            combo_counter(match.intIdx, counter)
+            result_list.append(counter)
+
+
 start = time()
 print('Start at:', ctime())
 
 for code in codes:
-    # print(code)
-    filename = './data/' + code + DATA_FILE_SUFFIX['D']
-    if os.path.exists(filename):
-        # print(filename)
-        data = pd.read_csv(filename)
-        # print(data.shape)
-        limit_up = data[data.p_change > 9.9].copy()
-        # print(limit_up.shape)
-        df = pd.DataFrame(
-            [{'code': code, 'total': len(data), 'limit_up': len(limit_up), 'percent': len(limit_up) / len(data)}])
-        if limit_up_results is None:
-            limit_up_results = df
-        else:
-            limit_up_results = limit_up_results.append(df)
-            # break
-# print(limit_up_results.describe())
-end = time()
+    print('Processing...', code)
+    combo_analyzer(code)
 
-print(limit_up_results[limit_up_results.percent > 0.2].describe())
+# combo_analyzer('000681')
+df = pd.DataFrame(result_list)
+df.fillna(value=0, inplace=True)
+# df = pd.read_csv('combo.csv', dtype={'code': np.str})
+df.set_index(df.code, inplace=True)
+df.pop('code')
+df.to_csv('combo.csv')
+
+# df.sort_index(axis=1, inplace=True)
+
+# print(df.index.dtype)
+# df.index = df.code
+
+
+# df.to_csv('combo.csv')
+print(df.head(5))
+
+end = time()
 print('End at:', ctime())
 print('Duration:', round(end - start, 2), 'seconds')
