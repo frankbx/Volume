@@ -45,7 +45,7 @@ def get_all_data(ktype='D', test_flag=False):
         chuncks = split_into_chunck(df.code, 20)
     else:
         df = pd.read_csv('./data/000681-D.csv')
-        chuncks = split_into_chunck(df.date, 20)
+        chuncks = split_into_chunck(df.date, 200)
     threads = list()
     for i in range(len(chuncks)):
         th = threading.Thread(target=process, args=(chuncks[i], ktype))
@@ -93,7 +93,7 @@ def get_stock_data(code, ktype='D', start=None, end=None):
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
         # retrieve data from the latest date
-        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=20, pause=1)
+        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=30, pause=2)
         r, c = data.shape
         # discard duplicated data of the last day if there's more than 1 row
         if r > 1:
@@ -126,5 +126,6 @@ def get_stock_basics():
     basics.to_csv("./basics.csv", encoding='utf8')
 
 
-get_all_data(ktype='D')
+# get_all_data(ktype='D')
+get_all_data(ktype='W')
 get_stock_basics()
