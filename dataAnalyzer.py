@@ -83,7 +83,7 @@ def combo_analyzer(code, ktype='D', start=None, end=None, percentage=9.9):
             result_list.append(counter)
 
 
-def run_combo():
+def run_combo(percentage=9.9, start=None, end=None):
     basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
     codes = basics.code
 
@@ -91,8 +91,8 @@ def run_combo():
     print('Start at:', ctime())
 
     for code in codes:
-        print('Processing...', code)
-        combo_analyzer(code)
+        # print('Processing...', code)
+        combo_analyzer(code, percentage=percentage)
 
     # combo_analyzer('000681')
     df = pd.DataFrame(result_list)
@@ -101,14 +101,18 @@ def run_combo():
     df.set_index(df.code, inplace=True)
     df.pop('code')
     df.sort_index(axis=1, inplace=True)
-    df.to_csv('combo.csv')
+    df.to_csv('combo' + str(percentage) + '.csv')
 
-    print(df.head(5))
+    print(df.describe().T)
 
     end = time()
     print('End at:', ctime())
     print('Duration:', round(end - start, 2), 'seconds')
 
 
-df = pd.read_csv('combo.csv')
-print(df.describe().T)
+result_list = []
+run_combo(5)
+result_list = []
+run_combo(7)
+result_list = []
+run_combo(9.9)
