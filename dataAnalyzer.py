@@ -1,35 +1,8 @@
-import os
 from time import ctime, time
 
 import numpy as np
-import pandas as pd
 
-from volumeConstants import *
-
-
-def read_data(code, ktype='D'):
-    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
-    data = None
-    if os.path.exists(filename):
-        data = pd.read_csv(filename)
-    return data
-
-
-def describe(code, ktype='D', p_change=None):
-    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
-    print(filename)
-    if os.path.exists(filename):
-        his_data = pd.read_csv(filename)
-        df = his_data.loc[:, ['open', 'close', 'low', 'high', 'p_change', 'turnover']]
-        if p_change is not None:
-            df_h = df[df.p_change > p_change]
-        else:
-            df_h = df
-        total, col = df.shape
-        match, col = df_h.shape
-        print(match, '/', total, ':', match / total * 100, '%')
-        d = df_h.describe()
-        print(d.loc[:, ['p_change', 'turnover']])
+from volumeUtils import *
 
 
 def market_overview():
@@ -68,51 +41,67 @@ def combo_counter(seq, counter):
         combo_counter(a, counter)
 
 
-result_list = []
+class AnalyticsEngine():
+    def __init__(self, ktype='D'):
+        self.ktype = ktype
+        self.big_data = self.load_data()
+        self.algorithms = []
+
+    def load_data(self):
+        data = None
+        basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
+        codes = basics.code
+        l = len(codes)
+        c = 1
+        for code in codes:
+            d = read_data(code, self.ktype)
+            if d is not None:
+                d['code'] = code
+            else:
+                print("Not found...", code)
+                c += 1
+                continue
+            if data is None:
+                c += 1
+                data = {code: d}
+            else:
+                c += 1
+                print("Adding...", code, c, '/', l)
+                data[code] = d
+        return data
+
+    def run_combo(self, percentage):
+        codes = self.big_data.keys()
+        result_list = []
+        for code in codes:
+            # print('Processing...', code)
+            data = self.big_data[code].copy()
+            if data is not None:
+                data['intIdx'] = range(0, len(data))
+                match = data[data.p_change > percentage].copy()
+                #    print(match.intIdx)
+                if len(match) > 0:
+                    counter = {'code': code, 100: len(data)}
+                    combo_counter(match.intIdx, counter)
+                    result_list.append(counter)
+
+        df = pd.DataFrame(result_list)
+        df.fillna(value=0, inplace=True)
+        df.set_index(df.code, inplace=True)
+        df.pop('code')
+        df.sort_index(axis=1, inplace=True)
+        df.to_csv('combo' + str(percentage) + '.csv')
 
 
-def combo_analyzer(code, ktype='D', start=None, end=None, percentage=9.9):
-    data = read_data(code, ktype)
-    if data is not None:
-        data['intIdx'] = range(0, len(data))
-        match = data[data.p_change > percentage].copy()
-        #    print(match.intIdx)
-        if len(match) > 0:
-            counter = {'code': code}
-            combo_counter(match.intIdx, counter)
-            result_list.append(counter)
+engine = AnalyticsEngine()
+start = time()
+print('Start at:', ctime())
 
-
-def run_combo(percentage=9.9, start=None, end=None):
-    basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
-    codes = basics.code
-
-    start = time()
-    print('Start at:', ctime())
-
-    for code in codes:
-        # print('Processing...', code)
-        combo_analyzer(code, percentage=percentage)
-
-    # combo_analyzer('000681')
-    df = pd.DataFrame(result_list)
-    df.fillna(value=0, inplace=True)
-    # df = pd.read_csv('combo.csv', dtype={'code': np.str})
-    df.set_index(df.code, inplace=True)
-    df.pop('code')
-    df.sort_index(axis=1, inplace=True)
-    df.to_csv('combo' + str(percentage) + '.csv')
-
-    print(df.describe().T)
-
-    end = time()
-    print('End at:', ctime())
-    print('Duration:', round(end - start, 2), 'seconds')
-
-
-result_list = []
-run_combo(5)
-result_list = []
-run_combo(7)
-result_list = []
-run_combo(9.9)
+print(len(engine.big_data))
+# engine.run_combo(8)
+# engine.run_combo(5)
+# engine.run_combo(7)
+engine.run_combo(9.9)
+end = time()
+print('End at:', ctime())
+print('Duration:', round(end - start, 2), 'seconds')
