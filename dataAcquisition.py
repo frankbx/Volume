@@ -1,10 +1,8 @@
 # -*- coding: utf8 -*-
-import os
 import threading
 from math import ceil
 from time import ctime, time
 
-import pandas as pd
 import tushare as ts
 
 from volumeUtils import *
@@ -126,6 +124,6 @@ def get_stock_basics():
     basics.to_csv("./basics.csv", encoding='utf8')
 
 
+get_stock_basics()
 get_all_data(ktype='D')
 get_all_data(ktype='W')
-get_stock_basics()

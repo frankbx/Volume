@@ -1,8 +1,6 @@
-import os
 from time import ctime, time
 
 import numpy as np
-import pandas as pd
 
 from volumeUtils import *
 
@@ -14,7 +12,7 @@ class RecommendEngine():
 
 start = time()
 print('Start at:', ctime())
-data = pd.read_csv('combo9.9.csv', dtype={'code': np.str})
+data = pd.read_csv('combo8.csv', dtype={'code': np.str})
 data['p'] = data['1'] / data['100']
 data.sort_values(by=['p'], inplace=True, ascending=False)
 
