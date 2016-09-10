@@ -41,7 +41,7 @@ def combo_counter(seq, counter):
         combo_counter(a, counter)
 
 
-class AnalyticsEngine():
+class AnalyticsEngine(object):
     def __init__(self, ktype='D'):
         self.ktype = ktype
         self.big_data = self.load_data()
@@ -91,6 +91,11 @@ class AnalyticsEngine():
         df.pop('code')
         df.sort_index(axis=1, inplace=True)
         df.to_csv('combo' + str(percentage) + '.csv')
+
+
+class Strategy(object):
+    def __init__(self, name):
+        self.name = name
 
 
 engine = AnalyticsEngine()
