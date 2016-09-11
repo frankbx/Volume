@@ -93,20 +93,23 @@ class AnalyticsEngine(object):
         df.to_csv('combo' + str(percentage) + '.csv')
 
 
+# A strategy is to define a set of factors and score all stocks based on certain algorithm
+# A strategy then is validated by test using data in specified time frame.
 class Strategy(object):
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        print(kwargs)
 
 
-engine = AnalyticsEngine()
 start = time()
 print('Start at:', ctime())
-
-print(len(engine.big_data))
-engine.run_combo(8)
-engine.run_combo(5)
-engine.run_combo(7)
-engine.run_combo(9.9)
+# engine = AnalyticsEngine()
+# print(len(engine.big_data))
+# engine.run_combo(8)
+# engine.run_combo(5)
+# engine.run_combo(7)
+# engine.run_combo(9.9)
+paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
+strategy = Strategy(**paras)
 end = time()
 print('End at:', ctime())
 print('Duration:', round(end - start, 2), 'seconds')

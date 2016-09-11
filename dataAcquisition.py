@@ -37,13 +37,9 @@ def get_sh_data():
     return sh
 
 
-def get_all_data(ktype='D', test_flag=False):
-    if not test_flag:
-        df = ts.get_today_all()
-        chuncks = split_into_chunck(df.code, 20)
-    else:
-        df = pd.read_csv('./data/000681-D.csv')
-        chuncks = split_into_chunck(df.date, 200)
+def get_all_data(ktype='D'):
+    df = ts.get_today_all()
+    chuncks = split_into_chunck(df.code, 20)
     threads = list()
     for i in range(len(chuncks)):
         th = threading.Thread(target=process, args=(chuncks[i], ktype))
