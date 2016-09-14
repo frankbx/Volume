@@ -9,7 +9,7 @@ def read_data(code, ktype='D'):
     filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
     data = None
     if os.path.exists(filename):
-        data = pd.read_csv(filename)
+        data = pd.read_csv(filename)  # ,index_col='date',parse_dates=True)
     return data
 
 

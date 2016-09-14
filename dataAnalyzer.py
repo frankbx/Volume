@@ -44,11 +44,14 @@ def combo_counter(seq, counter):
 class AnalyticsEngine(object):
     def __init__(self, ktype='D'):
         self.ktype = ktype
-        self.big_data = self.load_data()
+        if os.path.exists('./daily.csv'):
+            self.big_data = self.load_data_from_consolidated_file()
+        else:
+            self.big_data = self.load_data_from_files()
         self.algorithms = []
 
-    def load_data(self):
-        data = None
+    def load_data_from_files(self):
+        data = []
         basics = pd.read_csv('./basics.csv', dtype={'code': np.str})
         codes = basics.code
         l = len(codes)
@@ -58,17 +61,19 @@ class AnalyticsEngine(object):
             if d is not None:
                 d['code'] = code
             else:
-                print("Not found...", code)
+                # print("Not found...", code)
                 c += 1
                 continue
-            if data is None:
-                c += 1
-                data = {code: d}
-            else:
-                c += 1
-                print("Adding...", code, c, '/', l)
-                data[code] = d
+            data.append(d)
+        big_data = pd.concat(data, ignore_index=True)
+        return big_data
+
+    def load_data_from_consolidated_file(self):
+        data = pd.read_csv('./daily.csv', dtype={'code': np.str})
         return data
+
+    def save_data(self):
+        self.big_data.to_csv('./daily.csv', index=False)
 
     def run_combo(self, percentage):
         codes = self.big_data.keys()
@@ -81,15 +86,15 @@ class AnalyticsEngine(object):
                 match = data[data.p_change > percentage].copy()
                 #    print(match.intIdx)
                 if len(match) > 0:
-                    counter = {'code': code, 100: len(data)}
+                    counter = {'code': code, 'total': len(data)}
                     combo_counter(match.intIdx, counter)
                     result_list.append(counter)
 
         df = pd.DataFrame(result_list)
         df.fillna(value=0, inplace=True)
-        df.set_index(df.code, inplace=True)
-        df.pop('code')
-        df.sort_index(axis=1, inplace=True)
+        df.set_index('code', inplace=True)
+        # df.pop('code')
+        # df.sort_index(axis=1, inplace=True)
         df.to_csv('combo' + str(percentage) + '.csv')
 
 
@@ -100,16 +105,18 @@ class Strategy(object):
         print(kwargs)
 
 
-start = time()
-print('Start at:', ctime())
-# engine = AnalyticsEngine()
-# print(len(engine.big_data))
-# engine.run_combo(8)
-# engine.run_combo(5)
-# engine.run_combo(7)
-# engine.run_combo(9.9)
-paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
-strategy = Strategy(**paras)
-end = time()
-print('End at:', ctime())
-print('Duration:', round(end - start, 2), 'seconds')
+if __name__ == '__main__':
+    start = time()
+    print('Start at:', ctime())
+    engine = AnalyticsEngine()
+    print(engine.big_data.head(5))
+    # engine.save_data()
+    # engine.run_combo(10)
+    # engine.run_combo(5)
+    # engine.run_combo(7)
+    # engine.run_combo(9.9)
+    # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
+    # strategy = Strategy(**paras)
+    end = time()
+    print('End at:', ctime())
+    print('Duration:', round(end - start, 2), 'seconds')

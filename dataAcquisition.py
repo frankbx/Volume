@@ -10,19 +10,19 @@ from volumeUtils import *
 print(ts.__version__)
 
 
-def get_reports():
-    report = ts.get_report_data(2016, 1)
-    report['year'] = 2016
-    report['quarter'] = 1
-    for year in range(2005, 2016):
-        for quarter in range(1, 5):
-            print(year, quarter)
-            r = ts.get_report_data(year, quarter)
-            r['year'] = year
-            r['quarter'] = quarter
-            report = report.append(r, ignore_index=True)
-    report.sort_values(by='year')
-    report.to_excel('report.xlsx')
+# def get_reports():
+#     report = ts.get_report_data(2016, 1)
+#     report['year'] = 2016
+#     report['quarter'] = 1
+#     for year in range(2005, 2016):
+#         for quarter in range(1, 5):
+#             print(year, quarter)
+#             r = ts.get_report_data(year, quarter)
+#             r['year'] = year
+#             r['quarter'] = quarter
+#             report = report.append(r, ignore_index=True)
+#     report.sort_values(by='year')
+#     report.to_excel('report.xlsx')
 
 
 def get_sz_data():
@@ -119,7 +119,7 @@ def get_stock_basics():
     basics = ts.get_stock_basics()
     basics.to_csv("./basics.csv", encoding='utf8')
 
-
-get_stock_basics()
-get_all_data(ktype='D')
-get_all_data(ktype='W')
+if __name__ == '__main__':
+    get_stock_basics()
+    get_all_data(ktype='D')
+    get_all_data(ktype='W')
