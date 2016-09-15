@@ -44,6 +44,7 @@ def combo_counter(seq, counter):
 class AnalyticsEngine(object):
     def __init__(self, ktype='D'):
         self.ktype = ktype
+        # TODO add param to force load from all stock files
         if os.path.exists('./daily.csv'):
             self.big_data = self.load_data_from_consolidated_file()
         else:
@@ -74,6 +75,17 @@ class AnalyticsEngine(object):
 
     def save_data(self):
         self.big_data.to_csv('./daily.csv', index=False)
+
+    # TODO add ktype
+    # TODO add logic to handle missing start or end
+    def data_in_period(self, original, start=None, end=None):
+        if start is None and end is None:
+            return original
+        elif start is not None and end is not None:
+            rng = pd.date_range(start, end)
+            mask = pd.DataFrame(None, index=rng)
+            data = mask.merge(original, left_index=True, right_index=True)
+            return data
 
     def run_combo(self, percentage):
         codes = self.big_data.keys()
@@ -111,10 +123,7 @@ if __name__ == '__main__':
     engine = AnalyticsEngine()
     print(engine.big_data.head(5))
     # engine.save_data()
-    # engine.run_combo(10)
-    # engine.run_combo(5)
-    # engine.run_combo(7)
-    # engine.run_combo(9.9)
+
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
     # strategy = Strategy(**paras)
     end = time()
