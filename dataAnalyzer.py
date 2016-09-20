@@ -50,6 +50,7 @@ class AnalyticsEngine(object):
         else:
             self.big_data = self.load_data_from_files()
         self.algorithms = []
+        print(self.big_data.shape, 'data loaded')
 
     def load_data_from_files(self):
         data = []
@@ -62,7 +63,6 @@ class AnalyticsEngine(object):
             if d is not None:
                 d['code'] = code
             else:
-                # print("Not found...", code)
                 c += 1
                 continue
             data.append(d)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     print('Start at:', ctime())
     engine = AnalyticsEngine()
     print(engine.big_data.head(5))
-    # engine.save_data()
+    engine.save_data()
 
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
     # strategy = Strategy(**paras)
