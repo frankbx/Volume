@@ -111,10 +111,7 @@ if __name__ == '__main__':
     engine = AnalyticsEngine()
     print(engine.big_data.head(5))
     # engine.save_data()
-    # engine.run_combo(10)
-    # engine.run_combo(5)
-    # engine.run_combo(7)
-    # engine.run_combo(9.9)
+
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
     # strategy = Strategy(**paras)
     end = time()
