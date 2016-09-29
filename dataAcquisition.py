@@ -10,6 +10,23 @@ from volumeUtils import *
 print(ts.__version__)
 
 
+# TODO load all data into single file
+# TODO incremental add data
+# TODO load tick data
+
+
+def get_sz_data():
+    sz = ts.get_h_data('399106', start='2000-01-01', index=True)
+    # sz.to_csv('sz.csv')
+    return sz
+
+
+def get_sh_data():
+    sh = ts.get_h_data('000001', start='2000-01-05', index=True)
+    sh.to_csv('sh.csv')
+    return sh
+
+
 def get_all_data(ktype='D'):
     df = ts.get_today_all()
     chuncks = split_into_chunck(df.code, 20)
