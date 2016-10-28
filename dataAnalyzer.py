@@ -42,10 +42,10 @@ def combo_counter(seq, counter):
 
 
 class AnalyticsEngine(object):
-    def __init__(self, ktype='D'):
+    def __init__(self, ktype='D', force_reload=False):
         self.ktype = ktype
         # TODO add param to force load from all stock files
-        if os.path.exists('./daily.csv'):
+        if os.path.exists('./daily.csv') and not force_reload:
             self.big_data = self.load_data_from_consolidated_file()
         else:
             self.big_data = self.load_data_from_files()
@@ -120,8 +120,8 @@ class Strategy(object):
 if __name__ == '__main__':
     start = time()
     print('Start at:', ctime())
-    engine = AnalyticsEngine()
-    print(engine.big_data.head(5))
+    engine = AnalyticsEngine(force_reload=True)
+    print(engine.big_data.tail(5))
     engine.save_data()
 
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
