@@ -61,7 +61,8 @@ class AnalyticsEngine(object):
         for code in codes:
             d = read_data(code, self.ktype)
             if d is not None:
-                d['code'] = code
+                # d['code'] = code
+                pass
             else:
                 c += 1
                 continue
@@ -121,8 +122,8 @@ if __name__ == '__main__':
     start = time()
     print('Start at:', ctime())
     engine = AnalyticsEngine(force_reload=True)
-    print(engine.big_data.tail(5))
-    engine.save_data()
+    print(engine.big_data.open, engine.big_data.close)
+    # engine.save_data()
 
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
     # strategy = Strategy(**paras)

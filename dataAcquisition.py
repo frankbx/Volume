@@ -111,6 +111,6 @@ def get_stock_basics():
 
 
 if __name__ == '__main__':
-    # get_stock_basics()
+    get_stock_basics()
     get_all_data(ktype='D')
     # get_all_data(ktype='W')
