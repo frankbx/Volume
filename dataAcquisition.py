@@ -13,7 +13,17 @@ print(ts.__version__)
 # TODO load all data into single file
 # TODO incremental add data
 # TODO load tick data
+'''
+DataCollector is to download below kinds of data from internet:
+1. Index: SH, SZ
+2. Stock basics
+3. Stock K data, including 1 min, 5 min, 15 min, 30 min, 60 min, Daily, Weekly and Monthly
+4. Stock tick data
 
+Requirements:
+1. All data will be saved to local disk using HDF5 format
+2. Data will be incrementally added to existing file
+'''
 
 def get_sz_data():
     sz = ts.get_h_data('399106', start='2000-01-01', index=True)
@@ -108,6 +118,9 @@ def get_stock_basics():
     basics = ts.get_stock_basics()
     basics.to_csv("./basics.csv", encoding='utf8')
 
+
+def get_tick_data(code,start=None,end=None):
+    pass
 
 if __name__ == '__main__':
     get_stock_basics()

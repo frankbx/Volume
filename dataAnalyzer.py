@@ -61,8 +61,8 @@ class AnalyticsEngine(object):
         for code in codes:
             d = read_data(code, self.ktype)
             if d is not None:
-                # d['code'] = code
-                pass
+                d['code'] = code
+                # pass
             else:
                 c += 1
                 continue
