@@ -123,7 +123,7 @@ if __name__ == '__main__':
     print('Start at:', ctime())
     engine = AnalyticsEngine(force_reload=True)
     print(engine.big_data.open, engine.big_data.close)
-    # engine.save_data()
+    engine.save_data()
 
     # paras = {'name': 'strategy', 'p_change': 5, 'turnover': 1}
     # strategy = Strategy(**paras)

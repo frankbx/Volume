@@ -73,6 +73,7 @@ def get_stock_data(code, ktype='D', start=None, end=None):
     # check if the file already exists
     if os.path.exists(filename):
         # get the latest date
+        # print(filename)
         existing_data = pd.read_csv(filename)
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
@@ -90,8 +91,6 @@ def get_stock_data(code, ktype='D', start=None, end=None):
             # Append data to the file
             delta_data.to_csv(filename, mode='a', header=None)
             print(code, 'updated')
-            # else:
-            # print(code, 'not changed')
     else:
         # Create the data file directly
         data = ts.get_hist_data(code=code, ktype=ktype, start=start, end=end,
