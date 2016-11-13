@@ -59,15 +59,10 @@ is to position the labels minimizing overlap. For this we use an
 heuristic based on the direction of the nearest neighbor along each
 axis.
 """
-print(__doc__)
+# print(__doc__)
 
 # Author: Gael Varoquaux gael.varoquaux@normalesup.org
 # License: BSD 3 clause
-
-import datetime
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 try:
     from matplotlib.finance import quotes_historical_yahoo_ochl
@@ -75,90 +70,99 @@ except ImportError:
     # quotes_historical_yahoo_ochl was named quotes_historical_yahoo before matplotlib 1.4
     from matplotlib.finance import quotes_historical_yahoo as quotes_historical_yahoo_ochl
 from matplotlib.collections import LineCollection
+from pylab import *
 from sklearn import cluster, covariance, manifold
 
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
 ###############################################################################
 # Retrieve the data from Internet
 
 # Choose a time period reasonably calm (not too long ago so that we get
 # high-tech firms, and before the 2008 crash)
-d1 = datetime.datetime(2010, 1, 1)
-d2 = datetime.datetime(2016, 10, 1)
+d1 = datetime.datetime(2016, 1, 1)
+d2 = datetime.datetime(2016, 11, 11)
 
 # kraft symbol has now changed from KFT to MDLZ in yahoo
+# symbol_dict = {
+#     'TOT': 'Total',
+#     'XOM': 'Exxon',
+#     'CVX': 'Chevron',
+#     'COP': 'ConocoPhillips',
+#     'VLO': 'Valero Energy',
+#     'MSFT': 'Microsoft',
+#     'IBM': 'IBM',
+#     'TWX': 'Time Warner',
+#     'CMCSA': 'Comcast',
+#     'CVC': 'Cablevision',
+#     'YHOO': 'Yahoo',
+#     'DELL': 'Dell',
+#     'HPQ': 'HP',
+#     'AMZN': 'Amazon',
+#     'TM': 'Toyota',
+#     'CAJ': 'Canon',
+#     'MTU': 'Mitsubishi',
+#     'SNE': 'Sony',
+#     'F': 'Ford',
+#     'HMC': 'Honda',
+#     'NAV': 'Navistar',
+#     'NOC': 'Northrop Grumman',
+#     'BA': 'Boeing',
+#     'KO': 'Coca Cola',
+#     'MMM': '3M',
+#     'MCD': 'Mc Donalds',
+#     'PEP': 'Pepsi',
+#     'MDLZ': 'Kraft Foods',
+#     'K': 'Kellogg',
+#     'UN': 'Unilever',
+#     'MAR': 'Marriott',
+#     'PG': 'Procter Gamble',
+#     'CL': 'Colgate-Palmolive',
+#     'GE': 'General Electrics',
+#     'WFC': 'Wells Fargo',
+#     'JPM': 'JPMorgan Chase',
+#     'AIG': 'AIG',
+#     'AXP': 'American express',
+#     'BAC': 'Bank of America',
+#     'GS': 'Goldman Sachs',
+#     'AAPL': 'Apple',
+#     'SAP': 'SAP',
+#     'CSCO': 'Cisco',
+#     'TXN': 'Texas instruments',
+#     'XRX': 'Xerox',
+#     'LMT': 'Lookheed Martin',
+#     'WMT': 'Wal-Mart',
+#     'WBA': 'Walgreen',
+#     'HD': 'Home Depot',
+#     'GSK': 'GlaxoSmithKline',
+#     'PFE': 'Pfizer',
+#     'SNY': 'Sanofi-Aventis',
+#     'NVS': 'Novartis',
+#     'KMB': 'Kimberly-Clark',
+#     'R': 'Ryder',
+#     'GD': 'General Dynamics',
+#     'RTN': 'Raytheon',
+#     'CVS': 'CVS',
+#     'CAT': 'Caterpillar',
+#     'DD': 'DuPont de Nemours'}
 symbol_dict = {
-    'TOT': 'Total',
-    'XOM': 'Exxon',
-    'CVX': 'Chevron',
-    'COP': 'ConocoPhillips',
-    'VLO': 'Valero Energy',
-    'MSFT': 'Microsoft',
-    'IBM': 'IBM',
-    'TWX': 'Time Warner',
-    'CMCSA': 'Comcast',
-    'CVC': 'Cablevision',
-    'YHOO': 'Yahoo',
-    'DELL': 'Dell',
-    'HPQ': 'HP',
-    'AMZN': 'Amazon',
-    'TM': 'Toyota',
-    'CAJ': 'Canon',
-    'MTU': 'Mitsubishi',
-    'SNE': 'Sony',
-    'F': 'Ford',
-    'HMC': 'Honda',
-    'NAV': 'Navistar',
-    'NOC': 'Northrop Grumman',
-    'BA': 'Boeing',
-    'KO': 'Coca Cola',
-    'MMM': '3M',
-    'MCD': 'Mc Donalds',
-    'PEP': 'Pepsi',
-    'MDLZ': 'Kraft Foods',
-    'K': 'Kellogg',
-    'UN': 'Unilever',
-    'MAR': 'Marriott',
-    'PG': 'Procter Gamble',
-    'CL': 'Colgate-Palmolive',
-    'GE': 'General Electrics',
-    'WFC': 'Wells Fargo',
-    'JPM': 'JPMorgan Chase',
-    'AIG': 'AIG',
-    'AXP': 'American express',
-    'BAC': 'Bank of America',
-    'GS': 'Goldman Sachs',
-    'AAPL': 'Apple',
-    'SAP': 'SAP',
-    'CSCO': 'Cisco',
-    'TXN': 'Texas instruments',
-    'XRX': 'Xerox',
-    'LMT': 'Lookheed Martin',
-    'WMT': 'Wal-Mart',
-    'WBA': 'Walgreen',
-    'HD': 'Home Depot',
-    'GSK': 'GlaxoSmithKline',
-    'PFE': 'Pfizer',
-    'SNY': 'Sanofi-Aventis',
-    'NVS': 'Novartis',
-    'KMB': 'Kimberly-Clark',
-    'R': 'Ryder',
-    'GD': 'General Dynamics',
-    'RTN': 'Raytheon',
-    'CVS': 'CVS',
-    'CAT': 'Caterpillar',
-    'DD': 'DuPont de Nemours'}
-
+    '601600.ss': '中国铝业', '600362.ss': '江西铜业', '000782.sz': '美达股份', '600280.ss': '中央商场', '600112.ss': '天成控股',
+    '601015.ss': '陕西黑猫', '002486.sz': '嘉麟杰', '000681.sz': '视觉中国',
+    '000935.sz': '四川双马'}
 symbols, names = np.array(list(symbol_dict.items())).T
-
+# symbols = ['601600.ss', '600362.ss', '000782.sz', '600280.ss', '600112.ss', '601015.ss', '002486.sz', '000681.sz',
+#            '000935.sz']
 quotes = [quotes_historical_yahoo_ochl(symbol, d1, d2, asobject=True)
           for symbol in symbols]
 
 open = np.array([q.open for q in quotes]).astype(np.float)
 close = np.array([q.close for q in quotes]).astype(np.float)
+# t = np.array([q.open for q in quotes])
+# print(t)
 
 # The daily variations of the quotes are what carry most information
 variation = close - open
-
+print(variation.shape)
 ###############################################################################
 # Learn a graphical structure from the correlations
 edge_model = covariance.GraphLassoCV()
