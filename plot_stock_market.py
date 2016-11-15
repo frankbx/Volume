@@ -80,7 +80,7 @@ mpl.rcParams['axes.unicode_minus'] = False
 
 # Choose a time period reasonably calm (not too long ago so that we get
 # high-tech firms, and before the 2008 crash)
-d1 = datetime.datetime(2016, 1, 1)
+d1 = datetime.datetime(2015, 1, 1)
 d2 = datetime.datetime(2016, 11, 11)
 
 # kraft symbol has now changed from KFT to MDLZ in yahoo

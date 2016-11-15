@@ -130,3 +130,9 @@ if __name__ == '__main__':
     end = time()
     print('End at:', ctime())
     print('Duration:', round(end - start, 2), 'seconds')
+
+# 一般分析步骤：
+# 1. Turnover rate: select actively transaction in past 3 days
+# 2. Get tick data: buy > sell, amount delta
+# 3. Get big deals: buy > sell, amount delta
+# 4. Cluster analysis
