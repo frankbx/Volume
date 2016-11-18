@@ -8,7 +8,7 @@ FIVE_MINUTE_DATA_DIR = './data/5minutes'
 DAILY_DATA_DIR = './data/daily'
 WEEKLY_DATA_DIR = './data/weekly'
 K_TYPES = ['m', '5m', 'D', 'W']
-data_dir_dict = {
+DATA_DIR_DICT = {
     'D': DAILY_DATA_DIR,
     'W': WEEKLY_DATA_DIR,
     'm': MINUTE_DATA_DIR,
