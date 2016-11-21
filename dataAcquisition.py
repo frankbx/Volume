@@ -122,6 +122,9 @@ def get_stock_basics():
 def get_tick_data(code,start=None,end=None):
     pass
 
+def convert_tongdaxing_data():
+    pass
+
 if __name__ == '__main__':
     get_stock_basics()
     get_all_data(ktype='D')
