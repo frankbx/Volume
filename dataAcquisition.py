@@ -79,7 +79,10 @@ def process(code_list, ktype='D'):
 
 
 def get_stock_data(code, ktype='D', start=None, end=None):
-    filename = './data/' + code + DATA_FILE_SUFFIX[ktype]
+    directory = DATA_DIR_DICT[ktype]
+    if not os.path.exists(directory):
+        os.mkdir(directory)
+    filename = directory + add_suffix(code) + '.csv'
     # print(filename)
     # check if the file already exists
     if os.path.exists(filename):

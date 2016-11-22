@@ -3,10 +3,10 @@ import os
 import pandas as pd
 
 DATA_FILE_SUFFIX = {'D': '-D.csv', 'W': '-W.csv', 'M': '-M.csv'}
-MINUTE_DATA_DIR = './data/minute'
-FIVE_MINUTE_DATA_DIR = './data/5minutes'
-DAILY_DATA_DIR = './data/daily'
-WEEKLY_DATA_DIR = './data/weekly'
+MINUTE_DATA_DIR = './data/minute/'
+FIVE_MINUTE_DATA_DIR = './data/5minutes/'
+DAILY_DATA_DIR = './data/daily/'
+WEEKLY_DATA_DIR = './data/weekly/'
 K_TYPES = ['m', '5m', 'D', 'W']
 DATA_DIR_DICT = {
     'D': DAILY_DATA_DIR,
@@ -14,6 +14,13 @@ DATA_DIR_DICT = {
     'm': MINUTE_DATA_DIR,
     '5m': FIVE_MINUTE_DATA_DIR
 }
+
+
+def add_suffix(code):
+    if code.startswith('6'):
+        return code + '.SH'
+    else:
+        return code + '.SZ'
 
 
 def read_data(code, ktype='D'):
