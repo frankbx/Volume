@@ -2,13 +2,13 @@
 import threading
 from math import ceil
 from time import ctime, time
-import os
+
+import numpy as np
 import tushare as ts
 
 from volumeUtils import *
 
 print(ts.__version__)
-
 
 # TODO load all data into single file
 # TODO incremental add data
@@ -24,6 +24,7 @@ Requirements:
 1. All data will be saved to local disk using HDF5 format
 2. Data will be incrementally added to existing file
 '''
+
 
 def get_sz_data():
     sz = ts.get_h_data('399106', start='2000-01-01', index=True)
@@ -118,32 +119,27 @@ def get_stock_basics():
     basics = ts.get_stock_basics()
     basics.to_csv("./basics.csv", encoding='utf8')
 
-def transform_tongdaxin_data(original_file,transformed_file):
+
+def transform_tongdaxin_data(original_file, transformed_file):
     data = pd.read_csv(original_file,
-                   header=None,names=['date','time','open','high','low','close','volume','amount'],
-                   encoding='cp936', dtype={'time':np.str})[:-1]
+                       header=None, names=['date', 'time', 'open', 'high', 'low', 'close', 'volume', 'amount'],
+                       encoding='cp936', dtype={'time': np.str})[:-1]
     if os.path.exists(transformed_file):
-        existing_data = pd.read_csv(transformed_file,dtype={'time':np.str})
-        r,c = existing_data.shape
-        latest_date = existing_data.date[r-1]
-        latest_time = existing_data.time[r-1]
-#         print(latest_date)
-#         criterion1 = (data.date==latest_date and data.time>latest_time)
-#         criterion2 = data.date>latest_date
-        delta1 = data[data.date==latest_date][data.time>latest_time]
-        delta2 = data[data.date>latest_date]
-#         print(delta)
-        delta1.to_csv(transformed_file,mode='a', header=None,index=False)
-        delta2.to_csv(transformed_file,mode='a', header=None,index=False)
+        existing_data = pd.read_csv(transformed_file, dtype={'time': np.str})
+        r, c = existing_data.shape
+        latest_date = existing_data.date[r - 1]
+        latest_time = existing_data.time[r - 1]
+        delta1 = data[data.date == latest_date][data.time > latest_time]
+        delta2 = data[data.date > latest_date]
+        delta1.to_csv(transformed_file, mode='a', header=None, index=False)
+        delta2.to_csv(transformed_file, mode='a', header=None, index=False)
     else:
-        df = data.to_csv(transformed_file,index=False,encoding='utf-8',dtype={'time':np.str})
+        data.to_csv(transformed_file, index=False, encoding='utf-8', dtype={'time': np.str})
 
 
-def get_tick_data(code,start=None,end=None):
+def get_tick_data(code, start=None, end=None):
     pass
 
-def convert_tongdaxing_data():
-    pass
 
 if __name__ == '__main__':
     get_stock_basics()
