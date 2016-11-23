@@ -1,7 +1,8 @@
-import pandas as pd
-from volumeUtils import *
 import os
+
 import numpy as np
+
+from volumeUtils import *
 
 TDX_MINUTE_DATA_DIRECTORY = 'c:/data/minute/'
 TDX_FIVE_MINUTES_DATA_DIRECTORY = 'c:/data/5minutes/'
@@ -22,7 +23,9 @@ def transform_tongdaxin_data(original_file, transformed_file):
             # delta1.to_csv(transformed_file, mode='a', header=None, index=False)
             delta2.to_csv(transformed_file, mode='a', header=None, index=False)
     else:
-        data.to_csv(transformed_file, index=False, encoding='utf-8', dtype={'time': np.str})
+        r, c = data.shape
+        if r > 1:
+            data.to_csv(transformed_file, index=False, encoding='utf-8', dtype={'time': np.str})
 
 
 def transform_parallel(source, target):

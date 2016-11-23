@@ -1,9 +1,5 @@
 # -*- coding: utf8 -*-
-import threading
 
-from time import ctime, time
-
-import numpy as np
 import tushare as ts
 
 from volumeUtils import *
@@ -40,6 +36,9 @@ def get_sh_data():
 
 def get_all_data(ktype='D'):
     df = ts.get_today_all()
+    directory = DATA_DIR_DICT[ktype]
+    if not os.path.exists(directory):
+        os.mkdir(directory)
     chuncks = split_into_chunck(df.code, 20)
     threads = list()
     for i in range(len(chuncks)):
@@ -57,10 +56,6 @@ def get_all_data(ktype='D'):
     print('Duration:', round(end - start, 2))
 
 
-
-    return deck
-
-
 def process(code_list, ktype='D'):
     for code in code_list:
         get_stock_data(code, ktype)
@@ -69,8 +64,6 @@ def process(code_list, ktype='D'):
 
 def get_stock_data(code, ktype='D', start=None, end=None):
     directory = DATA_DIR_DICT[ktype]
-    if not os.path.exists(directory):
-        os.mkdir(directory)
     filename = directory + add_suffix(code) + '.csv'
     # print(filename)
     # check if the file already exists
@@ -112,14 +105,11 @@ def get_stock_basics():
     basics.to_csv("./basics.csv", encoding='utf8')
 
 
-
-
-
 def get_tick_data(code, start=None, end=None):
     pass
 
 
 if __name__ == '__main__':
-    get_stock_basics()
+    # get_stock_basics()
     get_all_data(ktype='D')
     # get_all_data(ktype='W')
