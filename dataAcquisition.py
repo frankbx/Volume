@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 import threading
-from math import ceil
+
 from time import ctime, time
 
 import numpy as np
@@ -57,18 +57,7 @@ def get_all_data(ktype='D'):
     print('Duration:', round(end - start, 2))
 
 
-def split_into_chunck(data_list, chunck_size=100):
-    l = len(data_list)
-    n = ceil(l / chunck_size)
-    deck = list()
-    for i in range(n):
-        if ((1 + i) * chunck_size) < l:
-            deck.append(data_list[i * chunck_size:(i + 1) * chunck_size])
-        else:
-            deck.append(data_list[i * chunck_size:])
-    print('Total length:', l)
-    print('Chunck size:', chunck_size)
-    print('Number of chuncks:', deck.__len__())
+
     return deck
 
 
@@ -123,21 +112,7 @@ def get_stock_basics():
     basics.to_csv("./basics.csv", encoding='utf8')
 
 
-def transform_tongdaxin_data(original_file, transformed_file):
-    data = pd.read_csv(original_file,
-                       header=None, names=['date', 'time', 'open', 'high', 'low', 'close', 'volume', 'amount'],
-                       encoding='cp936', dtype={'time': np.str})[:-1]
-    if os.path.exists(transformed_file):
-        existing_data = pd.read_csv(transformed_file, dtype={'time': np.str})
-        r, c = existing_data.shape
-        latest_date = existing_data.date[r - 1]
-        latest_time = existing_data.time[r - 1]
-        delta1 = data[data.date == latest_date][data.time > latest_time]
-        delta2 = data[data.date > latest_date]
-        delta1.to_csv(transformed_file, mode='a', header=None, index=False)
-        delta2.to_csv(transformed_file, mode='a', header=None, index=False)
-    else:
-        data.to_csv(transformed_file, index=False, encoding='utf-8', dtype={'time': np.str})
+
 
 
 def get_tick_data(code, start=None, end=None):
