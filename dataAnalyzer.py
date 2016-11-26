@@ -1,8 +1,8 @@
-from time import ctime, time
-
 import numpy as np
 
 from volumeUtils import *
+
+mkt_overview_columns = ['date', 'market', 'p_change', 'amount', 'up']
 
 
 def market_overview():
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     print('End at:', ctime())
     print('Duration:', round(end - start, 2), 'seconds')
 
-# 一般分析步骤：
-# 1. Turnover rate: select actively transaction in past 3 days
-# 2. Get tick data: buy > sell, amount delta
-# 3. Get big deals: buy > sell, amount delta
-# 4. Cluster analysis
+    # 一般分析步骤：
+    # 1. Turnover rate: select actively transaction in past 3 days
+    # 2. Get tick data: buy > sell, amount delta
+    # 3. Get big deals: buy > sell, amount delta
+    # 4. Cluster analysis
