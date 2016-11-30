@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 
+import numpy as np
 import tushare as ts
 
 from volumeUtils import *
@@ -34,8 +35,8 @@ def get_sh_data():
     return sh
 
 
-def get_all_data(ktype='D'):
-    df = ts.get_today_all()
+def get_all_data(ktype='D', ):
+    df = pd.read_csv('basics.csv', dtype={'code': np.str})
     directory = DATA_DIR_DICT[ktype]
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -62,7 +63,7 @@ def process(code_list, ktype='D'):
         # sleep(0.2)
 
 
-def get_stock_data(code, ktype='D', start=None, end=None):
+def get_stock_data(code, ktype='D'):
     directory = DATA_DIR_DICT[ktype]
     filename = directory + add_suffix(code) + '.csv'
     # print(filename)
@@ -74,7 +75,7 @@ def get_stock_data(code, ktype='D', start=None, end=None):
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
         # retrieve data from the latest date
-        data = ts.get_hist_data(code=code, start=latest_date, ktype=ktype, retry_count=30, pause=2)
+        data = ts.get_h_data(code=code, start=latest_date, ktype=ktype, retry_count=30, pause=2)
         r, c = data.shape
         # discard duplicated data of the last day if there's more than 1 row
         if r > 1:
@@ -88,8 +89,10 @@ def get_stock_data(code, ktype='D', start=None, end=None):
             delta_data.to_csv(filename, mode='a', header=None)
             print(code, 'updated')
     else:
+        basics = pd.read_csv('basics.csv', dtype={'code': np.str})
+        start_date = basics.ix[code]['timeToMarket']
         # Create the data file directly
-        data = ts.get_hist_data(code=code, ktype=ktype, start=start, end=end,
+        data = ts.get_h_data(code=code, ktype=ktype, start=start_date,
                                 retry_count=20, pause=1)
         # Data can be None if it's a new stock
         if data is not None:
@@ -102,6 +105,7 @@ def get_stock_data(code, ktype='D', start=None, end=None):
 
 def get_stock_basics():
     basics = ts.get_stock_basics()
+    # basics['date']=
     basics.to_csv("./basics.csv", encoding='utf8')
 
 
