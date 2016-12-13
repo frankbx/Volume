@@ -9,7 +9,7 @@ from time import ctime, time
 DATA_FILE_SUFFIX = {'D': '-D.csv', 'W': '-W.csv', 'M': '-M.csv'}
 MINUTE_DATA_DIR = './data/minute/'
 FIVE_MINUTE_DATA_DIR = './data/5minutes/'
-DAILY_DATA_DIR = './data/daily/'
+DAILY_DATA_DIR = './data/daily1/'
 WEEKLY_DATA_DIR = './data/weekly/'
 K_TYPES = ['m', '5m', 'D', 'W']
 DATA_DIR_DICT = {

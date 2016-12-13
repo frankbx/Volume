@@ -37,6 +37,7 @@ def get_sh_data():
 
 def get_all_data(ktype='D', ):
     df = pd.read_csv('basics.csv', dtype={'code': np.str})
+    df = df[df.timeToMarket != 0]
     directory = DATA_DIR_DICT[ktype]
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -75,7 +76,7 @@ def get_stock_data(code, ktype='D'):
         row, col = existing_data.shape
         latest_date = existing_data.date[row - 1]
         # retrieve data from the latest date
-        data = ts.get_h_data(code=code, start=latest_date, ktype=ktype, retry_count=30, pause=2)
+        data = ts.get_h_data(code=code, start=latest_date, retry_count=30, pause=2)
         r, c = data.shape
         # discard duplicated data of the last day if there's more than 1 row
         if r > 1:
@@ -90,10 +91,12 @@ def get_stock_data(code, ktype='D'):
             print(code, 'updated')
     else:
         basics = pd.read_csv('basics.csv', dtype={'code': np.str})
-        start_date = basics.ix[code]['timeToMarket']
+        basics = basics[basics.timeToMarket != 0]
+        basics.index = basics.code
+        start_date = str(basics.ix[code]['timeToMarket'])
+        start_date = start_date[0:4] + '-' + start_date[4:6] + '-' + start_date[6:8]
         # Create the data file directly
-        data = ts.get_h_data(code=code, ktype=ktype, start=start_date,
-                                retry_count=20, pause=1)
+        data = ts.get_h_data(code=code, start=start_date, retry_count=20, pause=1)
         # Data can be None if it's a new stock
         if data is not None:
             # The data is sorted so that the latest data at the bottom of the file.
