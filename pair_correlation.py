@@ -1,8 +1,12 @@
 import math
+
 import numpy as np
 
-import pandas as pd
-from time import ctime, time
+from volumeUtils import *
+
+corrlation_results = []
+
+data = {}
 
 
 def code_2_file(code):
@@ -12,21 +16,29 @@ def code_2_file(code):
         return './data/daily1/' + code + '.sz.csv'
 
 
-def read_data(file_name, start='2014-12-31'):
-    data = pd.read_csv(file_name)
-    data.index = data.date
-    return data[data.index > start]
+def read_data(code, start='2014-12-31'):
+    global data
+    file_name = code_2_file(code)
+    d = pd.read_csv(file_name)
+    d.index = d.date
+    data[code] = d[d.index > start]
+    # return data[data.index > start]
 
 
-def pair_correlation(code1, code2, start='2014-12-31'):
-    name1 = code_2_file(code1)
-    name2 = code_2_file(code2)
-    df1 = read_data(name1, start)
-    df2 = read_data(name2, start)
+def pair_correlation(code1, code2):
+    global corrlation_results
+    df1 = data[code1]
+    df2 = data[code2]
     x = df1.close - df1.close.mean()
     y = df2.close - df2.close.mean()
     cor = (x * y).sum() / math.sqrt((x * x).sum() * (y * y).sum())
-    return cor
+    corrlation_results.append({'code1': code1, 'code2': code2, 'corr': cor})
+
+
+def calc_pair_correlation(combinations, params):
+    for pair in combinations:
+        code1, code2 = pair
+        pair_correlation(code1, code2)
 
 
 if __name__ == '__main__':
@@ -37,21 +49,23 @@ if __name__ == '__main__':
     codes = list(basics.code)
     codes.sort()
     # print(codes)
+    # length = ceil(len(codes) / 100)
     length = len(codes)
     print(length)
-    results = []
+    combinations = []
     start = time()
     print('Start at:', ctime())
+    for c in codes:
+        read_data(c)
+    end = time()
+    print('Data loading End at:', ctime())
+    print('Duration:', round(end - start, 2), 'seconds')
     for i in range(0, length):
-        # print(codes[i])
         for j in range(i + 1, length):
-            corr = pair_correlation(codes[i], codes[j])
-            results.append({'code1': codes[i], 'code2': codes[j], 'corr': corr})
-        # if i == 1:
-        #     # print(results)
-        #     break
-    df = pd.DataFrame(results)
-    df.to_csv('results.csv', index=False)
+            combinations.append((codes[i], codes[j]))
+    parallel_processing(tasks=combinations, processing_func=calc_pair_correlation, chunck_size=850000)
+    df = pd.DataFrame(corrlation_results)
+    df.to_csv('results4.csv', index=False)
     # print(len(results))
     end = time()
     print('End at:', ctime())
