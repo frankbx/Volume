@@ -11,9 +11,9 @@ data = {}
 
 def code_2_file(code):
     if code.startswith('6'):
-        return './data/daily1/' + code + '.sh.csv'
+        return './data/daily1/' + code + '.SH.csv'
     else:
-        return './data/daily1/' + code + '.sz.csv'
+        return './data/daily1/' + code + '.SZ.csv'
 
 
 def read_data(code, start='2014-12-31'):
